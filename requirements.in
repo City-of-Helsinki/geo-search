@@ -1,0 +1,6 @@
+Django
+django-cors-headers
+django-environ
+djangorestframework
+psycopg2
+whitenoise
