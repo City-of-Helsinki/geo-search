@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  postgis:
+    image: postgis/postgis:13-3.1
+    restart: on-failure
+    environment:
+      POSTGRES_USER: geo-search
+      POSTGRES_PASSWORD: geo-search
+      POSTGRES_DB: geo-search
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    container_name: geo-search-db
+  django:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    environment:
+      DEV_SERVER: 1
+      DATABASE_URL: postgis://geo-search:geo-search@geo-search-db/geo-search
+      DATABASE_HOST: geo-search-db.helsinki
+    volumes:
+      - .:/app
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgis
+    container_name: geo-search-django
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  default:
+    name: helsinki

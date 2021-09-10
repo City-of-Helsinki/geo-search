@@ -2,6 +2,13 @@
 
 Service for searching geospatial information
 
+## Development with Docker
+
+1. Copy the contents of `.env.example` to `.env` and modify it if needed
+2. Run `docker compose up`
+
+The project is now running at [localhost:8081](http://localhost:8081)
+
 ## Development without Docker
 
 Prerequisites:
