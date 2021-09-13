@@ -18,6 +18,22 @@ if [[ "$APPLY_MIGRATIONS" = "1" ]]; then
     ./manage.py migrate --noinput
 fi
 
+# Create admin user. Generate password if there isn't one in the
+# environment variables.
+if [[ "$CREATE_SUPERUSER" = "1" ]]; then
+    if [[ "$ADMIN_USER_PASSWORD" ]]; then
+        DJANGO_SUPERUSER_PASSWORD=$ADMIN_USER_PASSWORD \
+            DJANGO_SUPERUSER_USERNAME=admin \
+            DJANGO_SUPERUSER_EMAIL=admin@hel.ninja \
+            ./manage.py createsuperuser --noinput || true
+    else
+        DJANGO_SUPERUSER_PASSWORD=admin \
+            DJANGO_SUPERUSER_USERNAME=admin \
+            DJANGO_SUPERUSER_EMAIL=admin@hel.ninja \
+            ./manage.py createsuperuser --noinput || true
+    fi
+fi
+
 # Start server
 if [[ ! -z "$@" ]]; then
     "$@"
