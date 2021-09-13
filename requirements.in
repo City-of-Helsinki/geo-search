@@ -3,5 +3,6 @@ django-cors-headers
 django-environ
 django-parler
 djangorestframework
+factory-boy
 psycopg2
 whitenoise
