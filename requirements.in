@@ -1,6 +1,7 @@
 Django
 django-cors-headers
 django-environ
+django-parler
 djangorestframework
 psycopg2
 whitenoise

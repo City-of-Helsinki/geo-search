@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "corsheaders",
     "rest_framework",
+    "parler",
 ]
 
 MIDDLEWARE = [
@@ -77,6 +78,7 @@ TIME_ZONE = "Europe/Helsinki"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+PARLER_LANGUAGES = {None: ({"code": "fi"}, {"code": "sv"}, {"code": "en"})}
 
 # Static files (CSS, JavaScript, Images)
 STATIC_ROOT = env.str("STATIC_ROOT")
