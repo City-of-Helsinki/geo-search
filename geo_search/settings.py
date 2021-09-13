@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "parler",
+    # Local apps
+    "address",
 ]
 
 MIDDLEWARE = [
@@ -87,3 +89,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# SRID for the locations stored in the application database
+PROJECTION_SRID = 4326  # WGS84
