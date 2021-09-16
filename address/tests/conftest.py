@@ -2,6 +2,13 @@ from django.contrib.gis.geos import Point
 from factory.faker import Faker as FactoryBoyFaker
 from faker import Faker
 from faker.providers import BaseProvider
+from pathlib import Path
+from pytest import fixture
+
+
+@fixture
+def shapefile() -> Path:
+    return Path(__file__).resolve().parent / "fixtures" / "shapefile.shp"
 
 
 class DjangoLocationProvider(BaseProvider):
