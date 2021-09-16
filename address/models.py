@@ -7,7 +7,7 @@ from parler.models import TranslatableModel, TranslatedFields
 class Municipality(TranslatableModel):
     id = models.CharField(max_length=100, primary_key=True)
     translations = TranslatedFields(
-        name=models.CharField(_("Name"), max_length=100, null=True, db_index=True)
+        name=models.CharField(_("Name"), max_length=100, db_index=True)
     )
 
     def __str__(self):
