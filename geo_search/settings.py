@@ -92,3 +92,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # SRID for the locations stored in the application database
 PROJECTION_SRID = 4326  # WGS84
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+}

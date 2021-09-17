@@ -1,4 +1,4 @@
-from factory import Faker, LazyAttribute, SubFactory
+from factory import Faker, LazyAttribute, post_generation, SubFactory
 from factory.django import DjangoModelFactory
 
 from ..models import Address, Municipality, Street
@@ -8,6 +8,12 @@ class MunicipalityFactory(DjangoModelFactory):
     id = LazyAttribute(lambda o: o.name.lower())
     name = Faker("city", locale="fi_FI")
 
+    @post_generation
+    def post(self, *_, **__):
+        name = self.name
+        self.set_current_language("sv")
+        self.name = name
+
     class Meta:
         model = Municipality
 
@@ -15,6 +21,12 @@ class MunicipalityFactory(DjangoModelFactory):
 class StreetFactory(DjangoModelFactory):
     municipality = SubFactory(MunicipalityFactory)
     name = Faker("street_name", locale="fi_FI")
+
+    @post_generation
+    def post(self, *_, **__):
+        name = self.name
+        self.set_current_language("sv")
+        self.name = name
 
     class Meta:
         model = Street
