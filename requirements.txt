@@ -16,9 +16,15 @@ django-cors-headers==3.8.0
 django-environ==0.6.0
     # via -r requirements.in
 django-parler==2.2
+    # via
+    #   -r requirements.in
+    #   django-parler-rest
+django-parler-rest==2.1
     # via -r requirements.in
 djangorestframework==3.12.4
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   django-parler-rest
 factory-boy==3.2.0
     # via -r requirements.in
 faker==8.12.1
