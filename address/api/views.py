@@ -1,4 +1,7 @@
+from django.conf import settings
+from django.contrib.gis.geos import Polygon
 from django.db.models import Q, QuerySet
+from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from ..models import Address
@@ -16,6 +19,7 @@ class AddressViewSet(ReadOnlyModelViewSet):
         addresses = self._filter_by_street_letter(addresses)
         addresses = self._filter_by_municipality(addresses)
         addresses = self._filter_by_postal_code(addresses)
+        addresses = self._filter_by_bbox(addresses)
         # We have to do distinct here because filtering by the translated
         # fields can return the same object multiple times if it has multiple
         # translations (e.g. "fi" and "sv").
@@ -54,3 +58,17 @@ class AddressViewSet(ReadOnlyModelViewSet):
         if postal_code is None:
             return addresses
         return addresses.filter(postal_code__iexact=postal_code)
+
+    def _filter_by_bbox(self, addresses: QuerySet) -> QuerySet:
+        bbox = self.request.query_params.get("bbox")
+        if bbox is None:
+            return addresses
+        try:
+            polygon = Polygon.from_bbox(float(point) for point in bbox.split(","))
+            polygon.srid = settings.PROJECTION_SRID
+        except ValueError:
+            raise ParseError(
+                "bbox values must be floating points or integers "
+                "in the format 'left,bottom,right,top'"
+            )
+        return addresses.filter(location__within=polygon)
