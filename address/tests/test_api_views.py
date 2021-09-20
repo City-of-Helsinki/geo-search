@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.urls import reverse
 from pytest import mark
 from rest_framework.test import APIClient
@@ -117,3 +119,29 @@ def test_filter_addresses_by_postal_code():
         "previous": None,
         "results": [serializer.to_representation(match)],
     }
+
+
+@mark.django_db
+def test_filter_addresses_by_bbox():
+    api_client = APIClient()
+    match = AddressFactory(
+        location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID)
+    )
+    AddressFactory(location=Point(x=27, y=67, srid=settings.PROJECTION_SRID))
+    serializer = AddressSerializer()
+    response = api_client.get(
+        reverse("address:address-list"), {"bbox": "24.9427,60.1665,24.9430,60.1667"}
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }
+
+
+def test_filter_addresses_by_bbox_returns_bad_request_if_bbox_is_invalid():
+    api_client = APIClient()
+    response = api_client.get(reverse("address:address-list"), {"bbox": "24.94,60.16"})
+    assert response.status_code == 400
