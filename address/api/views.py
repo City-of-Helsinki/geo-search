@@ -1,6 +1,8 @@
 from django.conf import settings
-from django.contrib.gis.geos import Polygon
+from django.contrib.gis.geos import Point, Polygon
+from django.contrib.gis.measure import D
 from django.db.models import Q, QuerySet
+from math import cos, pi
 from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
@@ -20,6 +22,7 @@ class AddressViewSet(ReadOnlyModelViewSet):
         addresses = self._filter_by_municipality(addresses)
         addresses = self._filter_by_postal_code(addresses)
         addresses = self._filter_by_bbox(addresses)
+        addresses = self._filter_by_location(addresses)
         # We have to do distinct here because filtering by the translated
         # fields can return the same object multiple times if it has multiple
         # translations (e.g. "fi" and "sv").
@@ -72,3 +75,30 @@ class AddressViewSet(ReadOnlyModelViewSet):
                 "in the format 'left,bottom,right,top'"
             )
         return addresses.filter(location__within=polygon)
+
+    def _filter_by_location(self, addresses: QuerySet) -> QuerySet:
+        lat = self.request.query_params.get("lat")
+        lon = self.request.query_params.get("lon")
+        if lat is None and lon is None:
+            return addresses
+        try:
+            lat = float(lat)
+            lon = float(lon)
+        except (ValueError, TypeError):
+            raise ParseError("'lat' and 'lon' must be provided as numbers")
+        try:
+            distance = float(self.request.query_params.get("distance", 1))
+        except ValueError:
+            raise ParseError("'distance' must be a number")
+        point = Point(lon, lat, srid=settings.PROJECTION_SRID)
+        # WGS84 uses degrees as units, so for the buffer we need the approximate degrees
+        distance_degrees = 2 * distance / 40000000 * 360 / cos(point.y / 360 * pi)
+        # To make the address lookups faster, we first use a buffer to limit the
+        # addresses to a smaller area. Then we can find the addresses by comparing
+        # their distances to the point. This way we don't have to do the comparison
+        # for every single address.
+        buffer = point.buffer(distance_degrees)
+        return addresses.filter(
+            location__intersects=buffer,
+            location__distance_lte=(point, D(m=distance)),
+        )

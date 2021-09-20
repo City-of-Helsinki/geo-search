@@ -145,3 +145,70 @@ def test_filter_addresses_by_bbox_returns_bad_request_if_bbox_is_invalid():
     api_client = APIClient()
     response = api_client.get(reverse("address:address-list"), {"bbox": "24.94,60.16"})
     assert response.status_code == 400
+
+
+@mark.django_db
+def test_filter_addresses_by_exact_location():
+    api_client = APIClient()
+    match = AddressFactory(
+        location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID)
+    )
+    AddressFactory(location=Point(x=27, y=67, srid=settings.PROJECTION_SRID))
+    serializer = AddressSerializer()
+    response = api_client.get(
+        reverse("address:address-list"),
+        {"lat": match.location.y, "lon": match.location.x},
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }
+
+
+@mark.django_db
+def test_filter_addresses_by_location_with_distance():
+    api_client = APIClient()
+    lat, lon = 60.1666, 24.9428
+    distance = 10
+    matches = [
+        # Exactly on the point
+        AddressFactory(location=Point(x=lon, y=lat, srid=settings.PROJECTION_SRID)),
+        # 9.8 meters away location, so should be included in the results
+        AddressFactory(
+            location=Point(x=24.942952094, y=60.16664523, srid=settings.PROJECTION_SRID)
+        ),
+    ]
+    # 10.2 meters from the point, so should not be included in the results
+    AddressFactory(
+        location=Point(x=24.942984201, y=60.166600058, srid=settings.PROJECTION_SRID)
+    )
+    serializer = AddressSerializer()
+    response = api_client.get(
+        reverse("address:address-list"),
+        {"lat": lat, "lon": lon, "distance": distance},
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": len(matches),
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match) for match in matches],
+    }
+
+
+def test_filter_addresses_returns_bad_request_if_location_is_invalid():
+    api_client = APIClient()
+    response = api_client.get(reverse("address:address-list"), {"lat": "60.1666"})
+    assert response.status_code == 400
+
+
+def test_filter_addresses_returns_bad_request_if_distance_is_invalid():
+    api_client = APIClient()
+    response = api_client.get(
+        reverse("address:address-list"),
+        {"lat": "60.1666", "lon": "24.9428", "distance": ""},
+    )
+    assert response.status_code == 400
