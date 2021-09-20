@@ -16,6 +16,7 @@ class MunicipalityFactory(DjangoModelFactory):
 
     class Meta:
         model = Municipality
+        django_get_or_create = ("id",)
 
 
 class StreetFactory(DjangoModelFactory):
