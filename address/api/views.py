@@ -23,16 +23,15 @@ class AddressViewSet(ReadOnlyModelViewSet):
         addresses = self._filter_by_postal_code(addresses)
         addresses = self._filter_by_bbox(addresses)
         addresses = self._filter_by_location(addresses)
-        # We have to do distinct here because filtering by the translated
-        # fields can return the same object multiple times if it has multiple
-        # translations (e.g. "fi" and "sv").
-        return addresses.distinct()
+        return addresses
 
     def _filter_by_street_name(self, addresses: QuerySet) -> QuerySet:
         street_name = self.request.query_params.get("streetname")
         if street_name is None:
             return addresses
-        return addresses.filter(street__translations__name__iexact=street_name)
+        return addresses.filter(
+            street__translations__name__iexact=street_name
+        ).distinct()
 
     def _filter_by_street_number(self, addresses: QuerySet) -> QuerySet:
         street_number = self.request.query_params.get("streetnumber")
@@ -54,7 +53,7 @@ class AddressViewSet(ReadOnlyModelViewSet):
             return addresses
         return addresses.filter(
             street__municipality__translations__name__iexact=municipality
-        )
+        ).distinct()
 
     def _filter_by_postal_code(self, addresses: QuerySet) -> QuerySet:
         postal_code = self.request.query_params.get("postalcode")
