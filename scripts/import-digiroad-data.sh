@@ -21,7 +21,7 @@ CONVERTED_DIR=$DATA_DIR/converted
 
 # Download the source data
 mkdir -p $DATA_DIR
-#curl "$DATA_URL" -o $DATA_DIR/data.zip
+curl "$DATA_URL" -o $DATA_DIR/data.zip
 
 # Extract the shapefiles from the archive
 rm -rf $EXTRACTED_DIR
