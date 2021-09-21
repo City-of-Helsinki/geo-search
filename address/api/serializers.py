@@ -56,6 +56,7 @@ class AddressSerializer(serializers.ModelSerializer):
             "number_end",
             "letter",
             "postal_code",
+            "post_office",
             "location",
             "modified_at",
         ]
