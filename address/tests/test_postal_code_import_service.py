@@ -17,12 +17,15 @@ def test_import_postal_codes():
     address = AddressFactory(
         location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID),
         postal_code="",
+        post_office="",
     )
     postal_code = "00100"
-    feature = _mock_feature({"posti_alue": postal_code})
+    post_office = "Helsinki Keskusta - Etu-Töölö"
+    feature = _mock_feature({"posti_alue": postal_code, "nimi": post_office})
     import_postal_codes([feature])
     address.refresh_from_db()
     assert address.postal_code == postal_code
+    assert address.post_office == post_office
 
 
 @mark.django_db
@@ -31,11 +34,13 @@ def test_import_postal_codes_does_not_update_postal_code_if_outside(paavo_shapef
         # Not within the 00100 postal code area
         location=Point(x=27, y=61, srid=settings.PROJECTION_SRID),
         postal_code="",
+        post_office="",
     )
-    feature = _mock_feature({"posti_alue": "00100"})
+    feature = _mock_feature({"posti_alue": "00100", "nimi": "Helsinki"})
     import_postal_codes([feature])
     address.refresh_from_db()
     assert not address.postal_code
+    assert not address.post_office
 
 
 def _mock_feature(fields: Dict[str, Any]) -> Feature:

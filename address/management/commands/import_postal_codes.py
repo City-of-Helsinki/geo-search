@@ -23,7 +23,7 @@ class Command(BaseCommand):
         num_addresses_updated = 0
         for path in paths:
             self.stdout.write(f"Reading data from {path}.")
-            for layer in DataSource(path):
+            for layer in DataSource(path, encoding="latin-1"):
                 num_addresses_updated += import_postal_codes(layer)
         self.stdout.write(
             self.style.SUCCESS(
