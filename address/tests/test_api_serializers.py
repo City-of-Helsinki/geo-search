@@ -64,6 +64,7 @@ def test_address_serializer():
         "number_end": address.number_end,
         "letter": address.letter,
         "postal_code": address.postal_code,
+        "post_office": address.post_office,
         "location": {
             "type": "point",
             "coordinates": [address.location.x, address.location.y],
