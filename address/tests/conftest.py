@@ -11,6 +11,11 @@ def shapefile() -> Path:
     return Path(__file__).resolve().parent / "fixtures" / "shapefile.shp"
 
 
+@fixture
+def paavo_shapefile() -> Path:
+    return Path(__file__).resolve().parent / "fixtures" / "postalcodes.shp"
+
+
 class DjangoLocationProvider(BaseProvider):
     """Provides a random location for a PointField."""
 
