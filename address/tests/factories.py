@@ -39,6 +39,7 @@ class AddressFactory(DjangoModelFactory):
     number_end = Faker("building_number", locale="fi_FI")
     letter = Faker("random_uppercase_letter", locale="fi_FI")
     postal_code = Faker("postcode", locale="fi_FI")
+    post_office = Faker("city", locale="fi_FI")
     location = Faker("location", country_code="FI")
 
     class Meta:

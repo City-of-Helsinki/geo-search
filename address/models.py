@@ -36,6 +36,7 @@ class Address(models.Model):
     number_end = models.CharField(max_length=6, blank=True)
     letter = models.CharField(max_length=2, blank=True)
     postal_code = models.CharField(max_length=10, null=True, blank=True)
+    post_office = models.CharField(max_length=100, null=True, blank=True)
     location = models.PointField(srid=settings.PROJECTION_SRID)
     modified_at = models.DateTimeField(auto_now=True)
 
