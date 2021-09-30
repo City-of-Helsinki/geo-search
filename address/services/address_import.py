@@ -4,7 +4,7 @@ from django.contrib.gis.gdal.feature import Feature
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from functools import lru_cache
 from math import sqrt
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Tuple
 
 from address.models import Address, Municipality, Street
 
@@ -116,7 +116,7 @@ def _build_addresses_from_feature(feature: Feature) -> List[Address]:
 def _build_addresses_on_side(
     street: Street,
     feature: Feature,
-    normals: Dict[float, tuple[float, float]],
+    normals: Dict[float, Tuple[float, float]],
     right_side: bool,
 ) -> List[Address]:
     """Constructs addresses for one side (right or left) of a street."""
@@ -179,7 +179,7 @@ def _find_numbers(feature: Feature, right_side: bool = False) -> range:
     return range(first_number, last_number + last_number_offset, number_increment)
 
 
-def _compute_normals(line_string: LineString) -> Dict[float, tuple[float, float]]:
+def _compute_normals(line_string: LineString) -> Dict[float, Tuple[float, float]]:
     """
     Compute a lookup table for the normals for each line segment in the line string.
     This is done so that given an interpolated distance (between 0 and 1) on the line
@@ -206,7 +206,7 @@ def _compute_normals(line_string: LineString) -> Dict[float, tuple[float, float]
 
 def _find_normal(
     distance: float, normals: dict, opposite: bool = False
-) -> tuple[float, float]:
+) -> Tuple[float, float]:
     """
     Given an distance between 0 and 1 on the line string, find the normal
     (or its opposite) from the provided dictionary.
