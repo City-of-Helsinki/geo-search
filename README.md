@@ -14,7 +14,7 @@ The project is now running at [localhost:8081](http://localhost:8081)
 Prerequisites:
 
 * PostgreSQL 11 or higher with PostGIS extension
-* Python 3.9
+* Python 3.8 or higher
 
 ### Installing Python requirements
 

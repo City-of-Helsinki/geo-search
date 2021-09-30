@@ -2,7 +2,7 @@ from bisect import bisect_left
 from django.conf import settings
 from django.contrib.gis.gdal.feature import Feature
 from django.contrib.gis.geos import LineString, MultiPoint, Point
-from functools import cache
+from functools import lru_cache
 from math import sqrt
 from typing import Dict, Iterable, List
 
@@ -222,7 +222,7 @@ def _find_normal(
     return x, y
 
 
-@cache
+@lru_cache(maxsize=None)
 def _create_municipality(municipality_id: int) -> Municipality:
     """Create a new municipality if it does not exist already, and return it."""
     municipality_fi, municipality_sv = MUNICIPALITIES[municipality_id]
@@ -235,7 +235,7 @@ def _create_municipality(municipality_id: int) -> Municipality:
     return municipality
 
 
-@cache
+@lru_cache(maxsize=None)
 def _create_street(name_fi: str, name_sv: str, municipality: Municipality) -> Street:
     """Create a new street if it does not exist already, and return it."""
     street, _ = Street.objects.translated(name=name_fi).get_or_create(
