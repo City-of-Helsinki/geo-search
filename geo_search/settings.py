@@ -16,7 +16,7 @@ env = Env(
     ),
 )
 
-Env.read_env(BASE_DIR / ".env")
+env.read_env(BASE_DIR / ".env")
 
 DEBUG = env.bool("DEBUG")
 SECRET_KEY = env.str("SECRET_KEY")
