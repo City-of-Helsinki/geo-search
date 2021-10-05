@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = Env(
     DEBUG=(bool, False),
-    SECRET_KEY=(str, ""),
+    SECRET_KEY=(str, "temp_secret"),
     ALLOWED_HOSTS=(list, []),
     STATIC_ROOT=(str, str(BASE_DIR / "static")),
     STATIC_URL=(str, "/static/"),
