@@ -8,3 +8,6 @@ djangorestframework-xml
 factory-boy
 psycopg2
 whitenoise
+pytest
+pytest-cov
+pytest-django
