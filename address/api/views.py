@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.measure import D
 from django.db.models import Q, QuerySet
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from math import cos, pi
 from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -9,7 +10,101 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from ..models import Address
 from .serializers import AddressSerializer
 
+_list_parameters = [
+    OpenApiParameter(
+        name="streetname",
+        location=OpenApiParameter.QUERY,
+        description=(
+            "Street name in Finnish or Swedish. "
+            'E.g. "Mannerheimintie" or "Mannerheimvägen".'
+        ),
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
+        name="streetnumber",
+        location=OpenApiParameter.QUERY,
+        description='Street number, e.g. "42".',
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
+        name="streetletter",
+        location=OpenApiParameter.QUERY,
+        description='Street letter, e.g. "B".',
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
+        name="municipality",
+        location=OpenApiParameter.QUERY,
+        description=(
+            "Municipality name in Finnish or Swedish. "
+            'E.g. "Helsinki" or "Helsingfors".'
+        ),
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
+        name="postalcode",
+        location=OpenApiParameter.QUERY,
+        description='Postal code, e.g. "00100".',
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
+        name="postoffice",
+        location=OpenApiParameter.QUERY,
+        description='Post office name, e.g. "Lappohja".',
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
+        name="bbox",
+        location=OpenApiParameter.QUERY,
+        description=(
+            'Bounding box in the format "left,bottom,right,top". '
+            "Each value must be a floating point number or an integer."
+        ),
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
+        name="lat",
+        location=OpenApiParameter.QUERY,
+        description=(
+            "Latitude (degrees) in the WGS84 (EPSG: 4326) coordinate system. "
+            "If this parameter is given, then `lon` parameter must also be given."
+        ),
+        required=False,
+        type=float,
+    ),
+    OpenApiParameter(
+        name="lon",
+        location=OpenApiParameter.QUERY,
+        description=(
+            "Longitude (degrees) in the WGS84 (EPSG: 4326) coordinate system. "
+            "If this parameter is given, then `lat` parameter must also be given."
+        ),
+        required=False,
+        type=float,
+    ),
+    OpenApiParameter(
+        name="distance",
+        location=OpenApiParameter.QUERY,
+        description=(
+            "Maximum distance (in meters) from the given location defined by"
+            "the `lat` and `lon` parameters. By default, the value is `1`. "
+            "If this parameter is given, the `lat` and `lon` parameters "
+            "should also be given."
+        ),
+        required=False,
+        type=float,
+    ),
+]
 
+
+@extend_schema_view(list=extend_schema(parameters=_list_parameters))
 class AddressViewSet(ReadOnlyModelViewSet):
     queryset = Address.objects.order_by("pk")
     serializer_class = AddressSerializer
