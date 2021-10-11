@@ -1,9 +1,21 @@
+from drf_spectacular.utils import extend_schema_field
 from parler_rest.fields import TranslatedFieldsField
 from parler_rest.serializers import TranslatableModelSerializer
 from rest_framework import serializers
 
 from ..models import Address, Municipality, Street
 from .fields import LocationField
+
+
+class TranslationsSerializer(serializers.Serializer):
+    fi = serializers.CharField(required=False)
+    sv = serializers.CharField(required=False)
+    en = serializers.CharField(required=False)
+
+
+@extend_schema_field(TranslationsSerializer)
+class TranslationsField(TranslatedFieldsField):
+    pass
 
 
 class TranslatedModelSerializer(TranslatableModelSerializer):
@@ -15,7 +27,7 @@ class TranslatedModelSerializer(TranslatableModelSerializer):
     The serializer inheriting this should have "translations" listed in its fields.
     """
 
-    translations = TranslatedFieldsField()
+    translations = TranslationsField()
 
     def to_representation(self, obj):
         representation = super().to_representation(obj)
