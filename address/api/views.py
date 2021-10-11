@@ -21,6 +21,7 @@ class AddressViewSet(ReadOnlyModelViewSet):
         addresses = self._filter_by_street_letter(addresses)
         addresses = self._filter_by_municipality(addresses)
         addresses = self._filter_by_postal_code(addresses)
+        addresses = self._filter_by_post_office(addresses)
         addresses = self._filter_by_bbox(addresses)
         addresses = self._filter_by_location(addresses)
         return addresses
@@ -60,6 +61,12 @@ class AddressViewSet(ReadOnlyModelViewSet):
         if postal_code is None:
             return addresses
         return addresses.filter(postal_code__iexact=postal_code)
+
+    def _filter_by_post_office(self, addresses: QuerySet) -> QuerySet:
+        post_office = self.request.query_params.get("postoffice")
+        if post_office is None:
+            return addresses
+        return addresses.filter(post_office__iexact=post_office)
 
     def _filter_by_bbox(self, addresses: QuerySet) -> QuerySet:
         bbox = self.request.query_params.get("bbox")

@@ -122,6 +122,24 @@ def test_filter_addresses_by_postal_code():
 
 
 @mark.django_db
+def test_filter_addresses_by_post_office():
+    api_client = APIClient()
+    match = AddressFactory(post_office="Askola")
+    AddressFactory(post_office="Helsinki")
+    serializer = AddressSerializer()
+    response = api_client.get(
+        reverse("address:address-list"), {"postoffice": match.post_office}
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }
+
+
+@mark.django_db
 def test_filter_addresses_by_bbox():
     api_client = APIClient()
     match = AddressFactory(
