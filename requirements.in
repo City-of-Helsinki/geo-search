@@ -5,6 +5,7 @@ django-parler
 django-parler-rest
 djangorestframework
 djangorestframework-xml
+drf-spectacular
 factory-boy
 psycopg2
 whitenoise

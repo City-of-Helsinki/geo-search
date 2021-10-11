@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "parler",
+    "drf_spectacular",
     # Local apps
     "address",
 ]
@@ -101,6 +102,14 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.BrowsableAPIRenderer",
         "rest_framework_xml.renderers.XMLRenderer",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Geospatial Search API",
+    "DESCRIPTION": "Service for searching geospatial information.",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "VERSION": None,
 }
