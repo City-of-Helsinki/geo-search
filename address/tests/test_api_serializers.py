@@ -14,10 +14,7 @@ def test_municipality_serializer():
     serializer = MunicipalitySerializer()
     actual = serializer.to_representation(municipality)
     assert actual == {
-        "name": {
-            "fi": municipality.get_translation("fi", "translations").name,
-            "sv": municipality.get_translation("sv", "translations").name,
-        }
+        "name": {t.language_code: t.name for t in municipality.translations.all()}
     }
 
 
@@ -29,14 +26,10 @@ def test_street_serializer():
     assert actual == {
         "municipality": {
             "name": {
-                "fi": street.municipality.get_translation("fi", "translations").name,
-                "sv": street.municipality.get_translation("sv", "translations").name,
-            }
+                t.language_code: t.name for t in street.municipality.translations.all()
+            },
         },
-        "name": {
-            "fi": street.get_translation("fi", "translations").name,
-            "sv": street.get_translation("sv", "translations").name,
-        },
+        "name": {t.language_code: t.name for t in street.translations.all()},
     }
 
 
@@ -51,14 +44,10 @@ def test_address_serializer():
         "street": {
             "municipality": {
                 "name": {
-                    "fi": municipality.get_translation("fi", "translations").name,
-                    "sv": municipality.get_translation("sv", "translations").name,
+                    t.language_code: t.name for t in municipality.translations.all()
                 }
             },
-            "name": {
-                "fi": street.get_translation("fi", "translations").name,
-                "sv": street.get_translation("sv", "translations").name,
-            },
+            "name": {t.language_code: t.name for t in street.translations.all()},
         },
         "number": address.number,
         "number_end": address.number_end,
