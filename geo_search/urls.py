@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import include, path
+from django.views.decorators.http import require_GET
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from address import urls as addresses_urls
@@ -17,11 +18,13 @@ urlpatterns = [
 ]
 
 
+@require_GET
 def healthz(*args, **kwargs) -> HttpResponse:
     """Returns status code 200 if the server is alive."""
     return HttpResponse(status=200)
 
 
+@require_GET
 def readiness(*args, **kwargs) -> HttpResponse:
     """
     Returns status code 200 if the server is ready to perform its duties.
