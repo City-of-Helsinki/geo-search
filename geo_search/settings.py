@@ -1,6 +1,9 @@
+import sentry_sdk
+import subprocess
 from django.utils.translation import gettext_lazy as _
 from environ import Env
 from pathlib import Path
+from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -14,6 +17,8 @@ env = Env(
         str,
         "postgis://geo-search:geo-search@localhost:5432/geo-search",
     ),
+    SENTRY_DSN=(str, ""),
+    SENTRY_ENVIRONMENT=(str, ""),
 )
 
 env_path = BASE_DIR / ".env"
@@ -25,6 +30,18 @@ SECRET_KEY = env.str("SECRET_KEY")
 if DEBUG and not SECRET_KEY:
     SECRET_KEY = "secret-for-debugging-only"
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+
+try:
+    version = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip()
+except OSError:
+    version = "n/a"
+
+sentry_sdk.init(
+    dsn=env.str("SENTRY_DSN"),
+    release=version,
+    environment=env("SENTRY_ENVIRONMENT"),
+    integrations=[DjangoIntegration()],
+)
 
 # Application definition
 INSTALLED_APPS = [
