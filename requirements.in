@@ -9,4 +9,5 @@ djangorestframework-xml
 drf-spectacular
 factory-boy
 psycopg2
+sentry-sdk
 whitenoise
