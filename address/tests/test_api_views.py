@@ -9,8 +9,7 @@ from ..tests.factories import AddressFactory, MunicipalityFactory, StreetFactory
 
 
 @mark.django_db
-def test_get_address_list():
-    api_client = APIClient()
+def test_get_address_list(api_client: APIClient):
     address = AddressFactory()
     serializer = AddressSerializer()
     response = api_client.get(reverse("address:address-list"))
@@ -24,8 +23,7 @@ def test_get_address_list():
 
 
 @mark.django_db
-def test_filter_addresses_by_street_name():
-    api_client = APIClient()
+def test_filter_addresses_by_street_name(api_client: APIClient):
     match = AddressFactory(street=StreetFactory(name="Matching Street"))
     AddressFactory(street=StreetFactory(name="Other Street"))
     serializer = AddressSerializer()
@@ -42,8 +40,7 @@ def test_filter_addresses_by_street_name():
 
 
 @mark.django_db
-def test_filter_addresses_by_street_number():
-    api_client = APIClient()
+def test_filter_addresses_by_street_number(api_client: APIClient):
     matching_number = 42
     matches = [
         AddressFactory(number=matching_number, number_end="99"),
@@ -65,8 +62,7 @@ def test_filter_addresses_by_street_number():
 
 
 @mark.django_db
-def test_filter_addresses_by_street_letter():
-    api_client = APIClient()
+def test_filter_addresses_by_street_letter(api_client: APIClient):
     matching_letter = "M"
     match = AddressFactory(letter=matching_letter)
     AddressFactory(letter="XX")
@@ -84,8 +80,7 @@ def test_filter_addresses_by_street_letter():
 
 
 @mark.django_db
-def test_filter_addresses_by_municipality():
-    api_client = APIClient()
+def test_filter_addresses_by_municipality(api_client: APIClient):
     municipality = MunicipalityFactory(name="Match")
     street = StreetFactory(municipality=municipality)
     match = AddressFactory(street=street)
@@ -104,8 +99,7 @@ def test_filter_addresses_by_municipality():
 
 
 @mark.django_db
-def test_filter_addresses_by_postal_code():
-    api_client = APIClient()
+def test_filter_addresses_by_postal_code(api_client: APIClient):
     match = AddressFactory(postal_code="00100")
     AddressFactory(postal_code="99999")
     serializer = AddressSerializer()
@@ -122,8 +116,7 @@ def test_filter_addresses_by_postal_code():
 
 
 @mark.django_db
-def test_filter_addresses_by_post_office():
-    api_client = APIClient()
+def test_filter_addresses_by_post_office(api_client: APIClient):
     match = AddressFactory(post_office="Askola")
     AddressFactory(post_office="Helsinki")
     serializer = AddressSerializer()
@@ -140,8 +133,7 @@ def test_filter_addresses_by_post_office():
 
 
 @mark.django_db
-def test_filter_addresses_by_bbox():
-    api_client = APIClient()
+def test_filter_addresses_by_bbox(api_client: APIClient):
     match = AddressFactory(
         location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID)
     )
@@ -159,15 +151,16 @@ def test_filter_addresses_by_bbox():
     }
 
 
-def test_filter_addresses_by_bbox_returns_bad_request_if_bbox_is_invalid():
-    api_client = APIClient()
+@mark.django_db
+def test_filter_addresses_by_bbox_returns_bad_request_if_bbox_is_invalid(
+    api_client: APIClient,
+):
     response = api_client.get(reverse("address:address-list"), {"bbox": "24.94,60.16"})
     assert response.status_code == 400
 
 
 @mark.django_db
-def test_filter_addresses_by_exact_location():
-    api_client = APIClient()
+def test_filter_addresses_by_exact_location(api_client: APIClient):
     match = AddressFactory(
         location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID)
     )
@@ -187,8 +180,7 @@ def test_filter_addresses_by_exact_location():
 
 
 @mark.django_db
-def test_filter_addresses_by_location_with_distance():
-    api_client = APIClient()
+def test_filter_addresses_by_location_with_distance(api_client: APIClient):
     lat, lon = 60.1666, 24.9428
     distance = 10
     matches = [
@@ -217,14 +209,18 @@ def test_filter_addresses_by_location_with_distance():
     }
 
 
-def test_filter_addresses_returns_bad_request_if_location_is_invalid():
-    api_client = APIClient()
+@mark.django_db
+def test_filter_addresses_returns_bad_request_if_location_is_invalid(
+    api_client: APIClient,
+):
     response = api_client.get(reverse("address:address-list"), {"lat": "60.1666"})
     assert response.status_code == 400
 
 
-def test_filter_addresses_returns_bad_request_if_distance_is_invalid():
-    api_client = APIClient()
+@mark.django_db
+def test_filter_addresses_returns_bad_request_if_distance_is_invalid(
+    api_client: APIClient,
+):
     response = api_client.get(
         reverse("address:address-list"),
         {"lat": "60.1666", "lon": "24.9428", "distance": ""},
