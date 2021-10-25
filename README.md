@@ -62,3 +62,24 @@ Basic `black` commands:
 
 * To let `black` do its magic: `black .`
 * To see which files `black` would change: `black --check .`
+
+## REST API authorization
+
+To use the REST API, you must be either logged in via the Django
+admin interface (for debugging purposes), or an API key must be
+provided in the `Authorization` header.
+
+### Generating API keys
+
+A new API key can be created in the Django admin interface under
+"API keys". When creating an API key, it will be shown to you only
+once, so make sure you copy it.
+
+### Making authorized requests
+
+Clients must pass their API key via the `Authorization` header.
+It must be formatted as follows:
+
+    Authorization: Api-Key <API_KEY>
+
+Where `<API_KEY>` refers to the full generated API key.
