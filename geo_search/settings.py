@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "corsheaders",
     "rest_framework",
+    "rest_framework_api_key",
     "parler",
     "drf_spectacular",
     # Local apps
@@ -104,6 +105,9 @@ REST_FRAMEWORK = {
         "rest_framework_xml.renderers.XMLRenderer",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PERMISSION_CLASSES": [
+        "geo_search.permissions.IsAuthenticatedOrHasAPIKey",
+    ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
 }
