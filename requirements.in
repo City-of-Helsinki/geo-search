@@ -4,6 +4,7 @@ django-environ
 django-parler
 django-parler-rest
 djangorestframework
+djangorestframework-api-key
 djangorestframework-xml
 drf-spectacular
 factory-boy
