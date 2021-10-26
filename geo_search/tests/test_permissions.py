@@ -10,6 +10,14 @@ def test_anonymous_client_cannot_access_api_without_api_key():
     assert response.status_code == 403
 
 
+def test_anonymous_client_can_access_api_if_authorization_is_not_required(
+    no_authorization_required,
+):
+    api_client = APIClient()
+    response = api_client.get("/v1/")
+    assert response.status_code == 200
+
+
 @mark.django_db
 def test_anonymous_client_can_access_api_with_valid_api_key():
     valid_api_key = APIKey.objects.create_key(name="test")[-1]
