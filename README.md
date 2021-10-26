@@ -86,3 +86,10 @@ It must be formatted as follows:
     Authorization: Api-Key <API_KEY>
 
 Where `<API_KEY>` refers to the full generated API key.
+
+### Disabling authorization checks
+
+By default, an API key or an active  session is required to use the API.
+
+To make the API completely public set `REQUIRE_AUTHORIZATION=0` in your
+environment variables.
