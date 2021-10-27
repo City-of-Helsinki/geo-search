@@ -33,7 +33,9 @@ if DEBUG and not SECRET_KEY:
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 try:
-    version = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip()
+    version = str(
+        subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip()
+    )
 except OSError:
     version = "n/a"
 
