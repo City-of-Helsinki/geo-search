@@ -128,7 +128,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "geo_search.permissions.IsAuthorized",
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_PAGINATION_CLASS": "geo_search.pagination.Pagination",
     "PAGE_SIZE": 100,
 }
 
