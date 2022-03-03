@@ -5,7 +5,7 @@ from pytest import mark
 from typing import Any, Dict
 from unittest.mock import MagicMock, Mock
 
-from ..services.postal_code_import import import_postal_codes
+from ..services.postal_code_import import PostalCodeImporter
 from ..tests.factories import AddressFactory
 
 TEST_GEOMETRY = Polygon.from_bbox([24.9427, 60.1665, 24.9430, 60.1667])
@@ -22,7 +22,7 @@ def test_import_postal_codes():
     postal_code = "00100"
     post_office = "Helsinki Keskusta - Etu-Töölö"
     feature = _mock_feature({"posti_alue": postal_code, "nimi": post_office})
-    import_postal_codes([feature])
+    PostalCodeImporter().import_postal_codes([feature])
     address.refresh_from_db()
     assert address.postal_code == postal_code
     assert address.post_office == post_office
@@ -37,7 +37,7 @@ def test_import_postal_codes_does_not_update_postal_code_if_outside(paavo_shapef
         post_office="",
     )
     feature = _mock_feature({"posti_alue": "00100", "nimi": "Helsinki"})
-    import_postal_codes([feature])
+    PostalCodeImporter().import_postal_codes([feature])
     address.refresh_from_db()
     assert not address.postal_code
     assert not address.post_office
