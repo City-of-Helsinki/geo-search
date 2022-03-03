@@ -21,7 +21,7 @@ from django.core.management.base import BaseCommand
 from pathlib import Path
 from time import time
 
-from ...services.address_import import delete_address_data, import_addresses
+from ...services.address_import import AddressImporter
 
 
 class Command(BaseCommand):
@@ -29,17 +29,19 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser) -> None:
         parser.add_argument("files", nargs="+", type=Path)
+        parser.add_argument("province")
 
     def handle(self, *args, **options) -> None:
         start_time = time()
-        self.stdout.write("Deleting existing data.")
-        delete_address_data()
+        self.stdout.write(f"Deleting existing data for province {options['province']}.")
+        importer = AddressImporter(options["province"])
+        importer.delete_address_data()
         paths = options["files"]
         total_addresses = 0
         for path in paths:
             self.stdout.write(f"Reading data from {path}.")
             for layer in DataSource(path):
-                num_addresses = import_addresses(layer)
+                num_addresses = importer.import_addresses(layer)
                 total_addresses += num_addresses
                 self.stdout.write(f"{num_addresses} addresses imported from {path}.")
         self.stdout.write(
