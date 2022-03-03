@@ -7,7 +7,7 @@ if [ $# == 0 ]
 then
     echo "No province argument supplied."    
     echo "Available provinces are ${available_provinces}."
-    exit 0
+    exit p0
 fi
 
 declare -A package_name
@@ -26,7 +26,7 @@ echo ${package_name[$1]}
 
 DATA_URL="https://ava.vaylapilvi.fi/ava/Tiest%C3%B6tiedot/Digiroad/Digiroad-irrotusaineistot/latest/Maakuntajako_DIGIROAD_R_EUREF-FIN/${package_name[$1]}"
 # Directory where the data will be downloaded and extracted
-DATA_DIR=/home/juuso/repos/geo-search/scripts/tmp/digiroad
+DATA_DIR=/tmp/digiroad
 
 # Pattern identifying the shapefiles (.dbf, .prj, .shp, .shx).
 # The shapefiles are named DR_LINKKI.* or DR_LINKKI_K.*, depending
