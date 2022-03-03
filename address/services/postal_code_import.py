@@ -4,33 +4,34 @@ from typing import Iterable
 from ..models import Address
 
 
-def import_postal_codes(features: Iterable[Feature]) -> int:
-    """
-    Go through the given postal code area features, find all addresses
-    that are within each area, and update the postal code of the address
-    accordingly.
-    """
-    total_addresses_updated = 0
+class PostalCodeImporter:
+    def import_postal_codes(self, features: Iterable[Feature]) -> int:
+        """
+        Go through the given postal code area features, find all addresses
+        that are within each area, and update the postal code of the address
+        accordingly.
+        """
+        total_addresses_updated = 0
 
-    # Clear existing postal codes and offices
-    Address.objects.filter(postal_code__isnull=False).update(
-        postal_code=None,
-        post_office=None,
-    )
-
-    # Update postal code for all addresses within each postal code area
-    for feature in features:
-        geometry = feature.geom.geos
-        postal_code = feature["posti_alue"].value
-        post_office = feature["nimi"].value
-        addresses = Address.objects.filter(
-            postal_code__isnull=True,
-            location__intersects=geometry,
+        # Clear existing postal codes and offices
+        Address.objects.filter(postal_code__isnull=False).update(
+            postal_code=None,
+            post_office=None,
         )
-        num_addresses_updated = addresses.update(
-            postal_code=postal_code,
-            post_office=post_office,
-        )
-        total_addresses_updated += num_addresses_updated
 
-    return total_addresses_updated
+        # Update postal code for all addresses within each postal code area
+        for feature in features:
+            geometry = feature.geom.geos
+            postal_code = feature["posti_alue"].value
+            post_office = feature["nimi"].value
+            addresses = Address.objects.filter(
+                postal_code__isnull=True,
+                location__intersects=geometry,
+            )
+            num_addresses_updated = addresses.update(
+                postal_code=postal_code,
+                post_office=post_office,
+            )
+            total_addresses_updated += num_addresses_updated
+
+        return total_addresses_updated
