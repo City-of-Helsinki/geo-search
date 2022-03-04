@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-available_provinces="'uusimaa' and 'varisinais-suomi'"
+available_provinces="'uusimaa' and 'varsinais-suomi'"
 
 if [ $# == 0 ]
 then
