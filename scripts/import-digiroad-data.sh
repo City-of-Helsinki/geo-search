@@ -7,7 +7,7 @@ if [ $# == 0 ]
 then
     echo "No province argument supplied."    
     echo "Available provinces are ${available_provinces}."
-    exit p0
+    exit 0
 fi
 
 declare -A package_name
