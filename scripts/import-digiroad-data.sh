@@ -43,7 +43,7 @@ CONVERTED_DIR=$DATA_DIR/converted
 mkdir -p $DATA_DIR
 curl "$DATA_URL" -o $DATA_DIR/data.zip
 
-# # Extract the shapefiles from the archive
+# Extract the shapefiles from the archive
 rm -rf $EXTRACTED_DIR
 unzip $DATA_DIR/data.zip $SHAPEFILE_PATTERN -d $EXTRACTED_DIR
 
