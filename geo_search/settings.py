@@ -20,6 +20,7 @@ env = Env(
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, ""),
     REQUIRE_AUTHORIZATION=(bool, True),
+    DJANGO_LOG_LEVEL=(str, "INFO"),
 )
 
 env_path = BASE_DIR / ".env"
@@ -142,3 +143,24 @@ SPECTACULAR_SETTINGS = {
 REQUIRE_AUTHORIZATION = env.bool("REQUIRE_AUTHORIZATION")
 
 USE_X_FORWARDED_HOST = True
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": env.str("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate": False,
+        },
+    },
+}
