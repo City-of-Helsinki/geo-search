@@ -3,9 +3,15 @@ from pytest import mark
 from ..api.serializers import (
     AddressSerializer,
     MunicipalitySerializer,
+    PostalCodeAreaSerializer,
     StreetSerializer,
 )
-from ..tests.factories import AddressFactory, MunicipalityFactory, StreetFactory
+from ..tests.factories import (
+    AddressFactory,
+    MunicipalityFactory,
+    PostalCodeAreaFactory,
+    StreetFactory,
+)
 
 
 @mark.django_db
@@ -14,7 +20,8 @@ def test_municipality_serializer():
     serializer = MunicipalitySerializer()
     actual = serializer.to_representation(municipality)
     assert actual == {
-        "name": {t.language_code: t.name for t in municipality.translations.all()}
+        "code": municipality.code,
+        "name": {t.language_code: t.name for t in municipality.translations.all()},
     }
 
 
@@ -24,12 +31,18 @@ def test_street_serializer():
     serializer = StreetSerializer()
     actual = serializer.to_representation(street)
     assert actual == {
-        "municipality": {
-            "name": {
-                t.language_code: t.name for t in street.municipality.translations.all()
-            },
-        },
         "name": {t.language_code: t.name for t in street.translations.all()},
+    }
+
+
+@mark.django_db
+def test_postal_code_area_serializer():
+    postal_code_area = PostalCodeAreaFactory()
+    serializer = PostalCodeAreaSerializer()
+    actual = serializer.to_representation(postal_code_area)
+    assert actual == {
+        "postal_code": postal_code_area.postal_code,
+        "name": {t.language_code: t.name for t in postal_code_area.translations.all()},
     }
 
 
@@ -42,21 +55,25 @@ def test_address_serializer():
     municipality = street.municipality
     assert actual == {
         "street": {
-            "municipality": {
-                "name": {
-                    t.language_code: t.name for t in municipality.translations.all()
-                }
-            },
             "name": {t.language_code: t.name for t in street.translations.all()},
         },
         "number": address.number,
         "number_end": address.number_end,
         "letter": address.letter,
-        "postal_code": address.postal_code,
-        "post_office": address.post_office,
+        "postal_code_area": {
+            "postal_code": address.postal_code_area.postal_code,
+            "name": {
+                t.language_code: t.name
+                for t in address.postal_code_area.translations.all()
+            },
+        },
         "location": {
             "type": "point",
             "coordinates": [address.location.x, address.location.y],
+        },
+        "municipality": {
+            "code": municipality.code,
+            "name": {t.language_code: t.name for t in municipality.translations.all()},
         },
         "modified_at": address.modified_at.astimezone().isoformat(),
     }

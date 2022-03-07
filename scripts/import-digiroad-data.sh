@@ -3,7 +3,7 @@
 set -e
 
 # URL to a zip file containing .shp files
-DATA_URL=https://aineistot.vayla.fi/digiroad/latest/Maakuntajako_DIGIROAD_R_EUREF-FIN/UUSIMAA.zip
+DATA_URL=https://ava.vaylapilvi.fi/ava/Tiest%C3%B6tiedot/Digiroad/Digiroad-irrotusaineistot/latest/Maakuntajako_DIGIROAD_R_EUREF-FIN/UUSIMAA.zip
 
 # Directory where the data will be downloaded and extracted
 DATA_DIR=/tmp/digiroad
