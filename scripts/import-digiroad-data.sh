@@ -1,10 +1,30 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
+available_provinces="'uusimaa' and 'varsinais-suomi'"
 
-# URL to a zip file containing .shp files
-DATA_URL=https://ava.vaylapilvi.fi/ava/Tiest%C3%B6tiedot/Digiroad/Digiroad-irrotusaineistot/latest/Maakuntajako_DIGIROAD_R_EUREF-FIN/UUSIMAA.zip
+if [ $# == 0 ]
+then
+    echo "No province argument supplied."
+    echo "Available provinces are ${available_provinces}."
+    exit 0
+fi
 
+declare -A package_name
+package_name["varsinais-suomi"]="VARSINAIS-SUOMI.zip"
+package_name["uusimaa"]="UUSIMAA.zip"
+
+if [ ${package_name[$1]+_} ]
+then
+    echo "Importing Digiroad data for province $1.";
+else
+    echo "Province $1 not found, available provinces are ${available_provinces}.";
+    exit 0
+fi
+
+echo ${package_name[$1]}
+
+DATA_URL="https://ava.vaylapilvi.fi/ava/Tiest%C3%B6tiedot/Digiroad/Digiroad-irrotusaineistot/latest/Maakuntajako_DIGIROAD_R_EUREF-FIN/${package_name[$1]}"
 # Directory where the data will be downloaded and extracted
 DATA_DIR=/tmp/digiroad
 
@@ -28,7 +48,7 @@ rm -rf $EXTRACTED_DIR
 unzip $DATA_DIR/data.zip $SHAPEFILE_PATTERN -d $EXTRACTED_DIR
 
 # Remove the measurements (M coordinate) from each shapefile.
-# This is done because Django's OGRGeomType class doesn't support LineStringZM geometries:
+# This is done because Django's OGRGeomType classogr doesn't support LineStringZM geometries:
 # https://github.com/django/django/blob/ca9872905559026af82000e46cde6f7dedc897b6/django/contrib/gis/gdal/geomtype.py#L9
 rm -rf $CONVERTED_DIR
 mkdir -p $CONVERTED_DIR
@@ -42,4 +62,4 @@ done
 
 # Run the management command with all the shapefiles as arguments
 SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd)"
-python "$SCRIPT_DIR/../manage.py" import_addresses $(find $CONVERTED_DIR -type f -name "DR_LINKK*.shp")
+python "$SCRIPT_DIR/../manage.py" import_addresses $(find $CONVERTED_DIR -type f -name "DR_LINKK*.shp") $1
