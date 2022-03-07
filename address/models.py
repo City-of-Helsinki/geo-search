@@ -6,15 +6,16 @@ from parler.models import TranslatableModel, TranslatedFields
 
 class Municipality(TranslatableModel):
     id = models.CharField(max_length=100, primary_key=True)
+    code = models.CharField(max_length=3)
     translations = TranslatedFields(
         name=models.CharField(_("Name"), max_length=100, db_index=True)
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     class Meta:
-        verbose_name_plural = _("municipalities")
+        verbose_name_plural = _("Municipalities")
 
 
 class Street(TranslatableModel):
