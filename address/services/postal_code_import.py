@@ -54,7 +54,7 @@ class PostalCodeImporter:
 
             logger.info(
                 "%s, %s, %s, %s"
-                    % (postal_code, post_office_fi, post_office_sv, num_addresses_updated)
+                % (postal_code, post_office_fi, post_office_sv, num_addresses_updated)
             )
 
             total_addresses_updated += num_addresses_updated

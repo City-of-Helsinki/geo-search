@@ -281,8 +281,9 @@ class AddressImporter:
         municipality.set_current_language("fi")
         municipality.name = municipality_fi
         municipality.code = municipality_id
-    municipality.save()
-    return municipality
+
+        municipality.save()
+        return municipality
 
     @lru_cache(maxsize=None)
     def _create_street(
