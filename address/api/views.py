@@ -60,9 +60,9 @@ _list_parameters = [
         type=str,
     ),
     OpenApiParameter(
-        name="postoffice",
+        name="postalcodearea",
         location=OpenApiParameter.QUERY,
-        description='Post office name in Finnish or Swedish. "'
+        description='Postal code area name in Finnish or Swedish. "'
         'E.g. "Lappohja" or "Lappvik"',
         required=False,
         type=str,
@@ -175,11 +175,11 @@ class AddressViewSet(ReadOnlyModelViewSet):
         return addresses.filter(postal_code_area__postal_code__iexact=postal_code)
 
     def _filter_by_post_office(self, addresses: QuerySet) -> QuerySet:
-        post_office = self.request.query_params.get("postoffice")
-        if post_office is None:
+        postal_code_area = self.request.query_params.get("postalcodearea")
+        if postal_code_area is None:
             return addresses
         return addresses.filter(
-            postal_code_area__translations__name__iexact=post_office
+            postal_code_area__translations__name__iexact=postal_code_area
         ).distinct()
 
     def _filter_by_bbox(self, addresses: QuerySet) -> QuerySet:

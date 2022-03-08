@@ -146,7 +146,7 @@ def test_filter_addresses_by_post_office(api_client: APIClient):
     match = AddressFactory(postal_code_area=postal_code_area)
     serializer = AddressSerializer()
     response = api_client.get(
-        reverse("address:address-list"), {"postoffice": match.postal_code_area.name}
+        reverse("address:address-list"), {"postalcodearea": match.postal_code_area.name}
     )
     assert response.status_code == 200
     assert response.data == {
