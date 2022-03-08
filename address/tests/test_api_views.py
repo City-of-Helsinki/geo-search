@@ -5,7 +5,12 @@ from pytest import mark
 from rest_framework.test import APIClient
 
 from ..api.serializers import AddressSerializer
-from ..tests.factories import AddressFactory, MunicipalityFactory, StreetFactory
+from ..tests.factories import (
+    AddressFactory,
+    MunicipalityFactory,
+    PostalCodeAreaFactory,
+    StreetFactory,
+)
 
 
 @mark.django_db
@@ -81,7 +86,7 @@ def test_filter_addresses_by_street_letter(api_client: APIClient):
 
 @mark.django_db
 def test_filter_addresses_by_municipality(api_client: APIClient):
-    municipality = MunicipalityFactory(name="Match")
+    municipality = MunicipalityFactory(name="Helsinki")
     street = StreetFactory(municipality=municipality)
     match = AddressFactory(street=street)
     AddressFactory()
@@ -99,12 +104,32 @@ def test_filter_addresses_by_municipality(api_client: APIClient):
 
 
 @mark.django_db
-def test_filter_addresses_by_postal_code(api_client: APIClient):
-    match = AddressFactory(postal_code="00100")
-    AddressFactory(postal_code="99999")
+def test_filter_addresses_by_municipality_code(api_client: APIClient):
+    municipality = MunicipalityFactory(code="91")
+    street = StreetFactory(municipality=municipality)
+    match = AddressFactory(street=street)
     serializer = AddressSerializer()
     response = api_client.get(
-        reverse("address:address-list"), {"postalcode": match.postal_code}
+        reverse("address:address-list"), {"municipalitycode": municipality.code}
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }
+
+
+@mark.django_db
+def test_filter_addresses_by_postal_code(api_client: APIClient):
+    postal_code_area = PostalCodeAreaFactory(postal_code="00100")
+    PostalCodeAreaFactory(postal_code="99999")
+    match = AddressFactory(postal_code_area=postal_code_area)
+    serializer = AddressSerializer()
+    response = api_client.get(
+        reverse("address:address-list"),
+        {"postalcode": match.postal_code_area.postal_code},
     )
     assert response.status_code == 200
     assert response.data == {
@@ -117,11 +142,11 @@ def test_filter_addresses_by_postal_code(api_client: APIClient):
 
 @mark.django_db
 def test_filter_addresses_by_post_office(api_client: APIClient):
-    match = AddressFactory(post_office="Askola")
-    AddressFactory(post_office="Helsinki")
+    postal_code_area = PostalCodeAreaFactory(name="Askola")
+    match = AddressFactory(postal_code_area=postal_code_area)
     serializer = AddressSerializer()
     response = api_client.get(
-        reverse("address:address-list"), {"postoffice": match.post_office}
+        reverse("address:address-list"), {"postalcodearea": match.postal_code_area.name}
     )
     assert response.status_code == 200
     assert response.data == {

@@ -46,6 +46,13 @@ _list_parameters = [
         type=str,
     ),
     OpenApiParameter(
+        name="municipalitycode",
+        location=OpenApiParameter.QUERY,
+        description='Municipality code, e.g. "91".',
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
         name="postalcode",
         location=OpenApiParameter.QUERY,
         description='Postal code, e.g. "00100".',
@@ -53,9 +60,10 @@ _list_parameters = [
         type=str,
     ),
     OpenApiParameter(
-        name="postoffice",
+        name="postalcodearea",
         location=OpenApiParameter.QUERY,
-        description='Post office name, e.g. "Lappohja".',
+        description='Postal code area name in Finnish or Swedish. "'
+        'E.g. "Lappohja" or "Lappvik"',
         required=False,
         type=str,
     ),
@@ -115,6 +123,7 @@ class AddressViewSet(ReadOnlyModelViewSet):
         addresses = self._filter_by_street_number(addresses)
         addresses = self._filter_by_street_letter(addresses)
         addresses = self._filter_by_municipality(addresses)
+        addresses = self._filter_by_municipality_code(addresses)
         addresses = self._filter_by_postal_code(addresses)
         addresses = self._filter_by_post_office(addresses)
         addresses = self._filter_by_bbox(addresses)
@@ -151,17 +160,27 @@ class AddressViewSet(ReadOnlyModelViewSet):
             street__municipality__translations__name__iexact=municipality
         ).distinct()
 
+    def _filter_by_municipality_code(self, addresses: QuerySet) -> QuerySet:
+        municipality_code = self.request.query_params.get("municipalitycode")
+        if municipality_code is None:
+            return addresses
+        return addresses.filter(
+            street__municipality__code__iexact=municipality_code
+        ).distinct()
+
     def _filter_by_postal_code(self, addresses: QuerySet) -> QuerySet:
         postal_code = self.request.query_params.get("postalcode")
         if postal_code is None:
             return addresses
-        return addresses.filter(postal_code__iexact=postal_code)
+        return addresses.filter(postal_code_area__postal_code__iexact=postal_code)
 
     def _filter_by_post_office(self, addresses: QuerySet) -> QuerySet:
-        post_office = self.request.query_params.get("postoffice")
-        if post_office is None:
+        postal_code_area = self.request.query_params.get("postalcodearea")
+        if postal_code_area is None:
             return addresses
-        return addresses.filter(post_office__iexact=post_office)
+        return addresses.filter(
+            postal_code_area__translations__name__iexact=postal_code_area
+        ).distinct()
 
     def _filter_by_bbox(self, addresses: QuerySet) -> QuerySet:
         bbox = self.request.query_params.get("bbox")

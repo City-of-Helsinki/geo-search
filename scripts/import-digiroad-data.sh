@@ -5,7 +5,7 @@ available_provinces="'uusimaa' and 'varsinais-suomi'"
 
 if [ $# == 0 ]
 then
-    echo "No province argument supplied."    
+    echo "No province argument supplied."
     echo "Available provinces are ${available_provinces}."
     exit 0
 fi
@@ -14,11 +14,11 @@ declare -A package_name
 package_name["varsinais-suomi"]="VARSINAIS-SUOMI.zip"
 package_name["uusimaa"]="UUSIMAA.zip"
 
-if [ ${package_name[$1]+_} ] 
-then 
-    echo "Importing Digiroad data for province $1."; 
-else 
-    echo "Province $1 not found, available provinces are ${available_provinces}."; 
+if [ ${package_name[$1]+_} ]
+then
+    echo "Importing Digiroad data for province $1.";
+else
+    echo "Province $1 not found, available provinces are ${available_provinces}.";
     exit 0
 fi
 

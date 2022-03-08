@@ -244,7 +244,7 @@ class AddressImporter:
             # Calculate the normal
             dx = end_x - start_x
             dy = end_y - start_y
-            length = sqrt(dx ** 2 + dy ** 2)
+            length = sqrt(dx**2 + dy**2)
             normal = -dy / length, dx / length
             # Associate with the distance for fast lookup of the
             # normal between the current start point and end point.
@@ -280,6 +280,8 @@ class AddressImporter:
         municipality.name = municipality_sv
         municipality.set_current_language("fi")
         municipality.name = municipality_fi
+        municipality.code = municipality_id
+
         municipality.save()
         return municipality
 
