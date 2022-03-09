@@ -1,9 +1,17 @@
 import sentry_sdk
 import subprocess
+from django.utils.log import DEFAULT_LOGGING
 from django.utils.translation import gettext_lazy as _
 from environ import Env
 from pathlib import Path
 from sentry_sdk.integrations.django import DjangoIntegration
+
+# Enable logging to console from our modules by configuring the root logger
+DEFAULT_LOGGING["loggers"][""] = {
+    "handlers": ["console"],
+    "level": "INFO",
+    "propagate": True,
+}
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -143,24 +151,3 @@ SPECTACULAR_SETTINGS = {
 REQUIRE_AUTHORIZATION = env.bool("REQUIRE_AUTHORIZATION")
 
 USE_X_FORWARDED_HOST = True
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": env.str("DJANGO_LOG_LEVEL", "INFO"),
-            "propagate": False,
-        },
-    },
-}
