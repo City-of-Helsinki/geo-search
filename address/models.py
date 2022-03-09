@@ -39,7 +39,7 @@ class PostalCodeArea(TranslatableModel):
     )
 
     def __str__(self) -> str:
-        return self.name
+        return self.postal_code
 
     class Meta:
         verbose_name_plural = _("Postal code areas")
