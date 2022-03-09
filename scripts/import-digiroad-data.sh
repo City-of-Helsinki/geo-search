@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 available_provinces="'uusimaa' and 'varsinais-suomi'"
@@ -10,21 +10,20 @@ then
     exit 0
 fi
 
-declare -A package_name
-package_name["varsinais-suomi"]="VARSINAIS-SUOMI.zip"
-package_name["uusimaa"]="UUSIMAA.zip"
-
-if [ ${package_name[$1]+_} ]
+if [ $1 == "uusimaa" ]
 then
-    echo "Importing Digiroad data for province $1.";
+    package_name="UUSIMAA.zip"
+elif [ $1 == "varsinais-suomi" ]
+then
+    package_name="VARSINAIS-SUOMI.zip"
 else
     echo "Province $1 not found, available provinces are ${available_provinces}.";
     exit 0
 fi
 
-echo ${package_name[$1]}
+echo "Importing Digiroad data for province $1.";
 
-DATA_URL="https://ava.vaylapilvi.fi/ava/Tiest%C3%B6tiedot/Digiroad/Digiroad-irrotusaineistot/latest/Maakuntajako_DIGIROAD_R_EUREF-FIN/${package_name[$1]}"
+DATA_URL="https://ava.vaylapilvi.fi/ava/Tiest%C3%B6tiedot/Digiroad/Digiroad-irrotusaineistot/latest/Maakuntajako_DIGIROAD_R_EUREF-FIN/${package_name}"
 # Directory where the data will be downloaded and extracted
 DATA_DIR=/tmp/digiroad
 
