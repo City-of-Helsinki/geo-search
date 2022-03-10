@@ -52,7 +52,7 @@ MUNICIPALITIES = {
     "varsinais-suomi": {
         19: ("Aura", "Aura"),
         202: ("Kaarina", "S:t Karins"),
-        322: ("Kemiö", "Kimito"),
+        322: ("Kemiönsaari", "Kimitoön"),
         284: ("Koski Tl", "Koskis"),
         304: ("Kustaavi", "Gustavs"),
         400: ("Laitila", "Letala"),
@@ -65,7 +65,6 @@ MUNICIPALITIES = {
         529: ("Naantali", "Nådendal"),
         538: ("Nousiainen", "Nousis"),
         561: ("Oripää", "Oripää"),
-        573: ("Parainen", "Pargas"),
         577: ("Paimio", "Pemar"),
         631: ("Pyhäranta", "Pyhäranta"),
         636: ("Pöytyä", "Pöytis"),
@@ -244,7 +243,7 @@ class AddressImporter:
             # Calculate the normal
             dx = end_x - start_x
             dy = end_y - start_y
-            length = sqrt(dx**2 + dy**2)
+            length = sqrt(dx ** 2 + dy ** 2)
             normal = -dy / length, dx / length
             # Associate with the distance for fast lookup of the
             # normal between the current start point and end point.
