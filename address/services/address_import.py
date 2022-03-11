@@ -6,6 +6,7 @@ from functools import lru_cache
 from math import sqrt
 from typing import Dict, Iterable, List, Tuple
 
+from address.constants import MUNICIPALITIES
 from address.models import Address, Municipality, Street
 
 # Offset (in meters) from the middle of the street to the address at perpendicular to
@@ -16,70 +17,6 @@ ADDRESS_LOCATION_OFFSET_METERS = 15
 
 # Write addresses to database after this many instances have been generated
 ADDRESS_BATCH_SIZE = 1000
-
-# Municipalities in the Uusimaa region: https://avoindata.fi/data/dataset/kuntaluettelo
-# The municipality names are not included in the Digiroad data, so this table is used to
-# map each municipality number to the Finnish and Swedish names.
-MUNICIPALITIES = {
-    "uusimaa": {
-        18: ("Askola", "Askola"),
-        49: ("Espoo", "Esbo"),
-        78: ("Hanko", "Hangö"),
-        91: ("Helsinki", "Helsingfors"),
-        92: ("Vantaa", "Vanda"),
-        106: ("Hyvinkää", "Hyvinge"),
-        149: ("Inkoo", "Ingå"),
-        186: ("Järvenpää", "Träskända"),
-        224: ("Karkkila", "Högfors"),
-        235: ("Kauniainen", "Grankulla"),
-        245: ("Kerava", "Kervo"),
-        257: ("Kirkkonummi", "Kyrkslätt"),
-        407: ("Lapinjärvi", "Lappträsk"),
-        434: ("Loviisa", "Lovisa"),
-        444: ("Lohja", "Lojo"),
-        504: ("Myrskylä", "Mörskom"),
-        505: ("Mäntsälä", "Mäntsälä"),
-        543: ("Nurmijärvi", "Nurmijärvi"),
-        611: ("Pornainen", "Borgnäs"),
-        616: ("Pukkila", "Pukkila"),
-        638: ("Porvoo", "Borgå"),
-        710: ("Raasepori", "Raseborg"),
-        753: ("Sipoo", "Sibbo"),
-        755: ("Siuntio", "Sjundeå"),
-        858: ("Tuusula", "Tusby"),
-        927: ("Vihti", "Vichtis"),
-    },
-    "varsinais-suomi": {
-        19: ("Aura", "Aura"),
-        202: ("Kaarina", "S:t Karins"),
-        322: ("Kemiö", "Kimito"),
-        284: ("Koski Tl", "Koskis"),
-        304: ("Kustaavi", "Gustavs"),
-        400: ("Laitila", "Letala"),
-        423: ("Lieto", "Lundo"),
-        430: ("Loimaa", "Loimaa"),
-        445: ("Parainen", "Pargas"),
-        480: ("Marttila", "S:t Mårtens"),
-        481: ("Masku", "Masko"),
-        503: ("Mynämäki", "Virmo"),
-        529: ("Naantali", "Nådendal"),
-        538: ("Nousiainen", "Nousis"),
-        561: ("Oripää", "Oripää"),
-        573: ("Parainen", "Pargas"),
-        577: ("Paimio", "Pemar"),
-        631: ("Pyhäranta", "Pyhäranta"),
-        636: ("Pöytyä", "Pöytis"),
-        680: ("Raisio", "Reso"),
-        704: ("Rusko", "Rusko"),
-        734: ("Salo", "Salo"),
-        738: ("Sauvo", "Sagu"),
-        761: ("Somero", "Somero"),
-        833: ("Taivassalo", "Tövsala"),
-        853: ("Turku", "Åbo"),
-        895: ("Uusikaupunki", "Nystad"),
-        918: ("Vehmaa", "Vemo"),
-    },
-}
 
 
 class AddressImporter:
