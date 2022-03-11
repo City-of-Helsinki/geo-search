@@ -15,11 +15,12 @@ class Command(BaseCommand):
     help = "Imports postal codes from the given Paavo shapefiles."
 
     def add_arguments(self, parser) -> None:
+        parser.add_argument("province")
         parser.add_argument("files", nargs="+", type=Path)
 
     def handle(self, *args, **options) -> None:
         start_time = time()
-        importer = PostalCodeImporter()
+        importer = PostalCodeImporter(options["province"])
         paths = options["files"]
         num_addresses_updated = 0
         for path in paths:
