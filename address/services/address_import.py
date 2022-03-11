@@ -52,9 +52,9 @@ MUNICIPALITIES = {
     "varsinais-suomi": {
         19: ("Aura", "Aura"),
         202: ("Kaarina", "S:t Karins"),
-        322: ("Kemiönsaari", "Kimitoön"),
         284: ("Koski Tl", "Koskis"),
-        304: ("Kustaavi", "Gustavs"),
+        304: ("Kustavi", "Gustavs"),
+        322: ("Kemiönsaari", "Kimitoön"),
         400: ("Laitila", "Letala"),
         423: ("Lieto", "Lundo"),
         430: ("Loimaa", "Loimaa"),
