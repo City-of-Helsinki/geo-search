@@ -4,12 +4,17 @@ from django.contrib.gis.gdal.feature import Feature
 from django.contrib.gis.geos import MultiPolygon
 from typing import Iterable
 
+from address.constants import MUNICIPALITIES
+
 from ..models import Address, PostalCodeArea
 
 logger = logging.getLogger(__name__)
 
 
 class PostalCodeImporter:
+    def __init__(self, province: str = None):
+        self.province = province
+
     def import_postal_codes(self, features: Iterable[Feature]) -> int:
         """
         Go through the given postal code area features, find all addresses
@@ -18,10 +23,21 @@ class PostalCodeImporter:
         """
         total_addresses_updated = 0
 
-        # Clear existing postal codes and offices
-        Address.objects.filter(postal_code_area__isnull=False).update(
-            postal_code_area=None,
-        )
+        if self.province in MUNICIPALITIES.keys():
+            muni_ids = [
+                muni[1][0].lower() for muni in MUNICIPALITIES[self.province].items()
+            ]
+            # Clear existing postal code areas for one province
+            Address.objects.filter(
+                postal_code_area__isnull=False, street__municipality__id__in=muni_ids
+            ).update(
+                postal_code_area=None,
+            )
+        else:
+            # Clear existing postal code areas for all provinces
+            Address.objects.filter(postal_code_area__isnull=False).update(
+                postal_code_area=None,
+            )
 
         # Update postal code for all addresses within each postal code area
         for feature in features:
