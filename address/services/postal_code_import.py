@@ -29,7 +29,7 @@ class PostalCodeImporter:
             ]
             # Clear existing postal code areas for one province
             Address.objects.filter(
-                postal_code_area__isnull=False, street__municipality__id__in=muni_ids
+                postal_code_area__isnull=False, municipality__id__in=muni_ids
             ).update(
                 postal_code_area=None,
             )

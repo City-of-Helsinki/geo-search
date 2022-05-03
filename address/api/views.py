@@ -157,16 +157,14 @@ class AddressViewSet(ReadOnlyModelViewSet):
         if municipality is None:
             return addresses
         return addresses.filter(
-            street__municipality__translations__name__iexact=municipality
+            municipality__translations__name__iexact=municipality
         ).distinct()
 
     def _filter_by_municipality_code(self, addresses: QuerySet) -> QuerySet:
         municipality_code = self.request.query_params.get("municipalitycode")
         if municipality_code is None:
             return addresses
-        return addresses.filter(
-            street__municipality__code__iexact=municipality_code
-        ).distinct()
+        return addresses.filter(municipality__code__iexact=municipality_code).distinct()
 
     def _filter_by_postal_code(self, addresses: QuerySet) -> QuerySet:
         postal_code = self.request.query_params.get("postalcode")

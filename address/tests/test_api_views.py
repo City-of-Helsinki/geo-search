@@ -87,8 +87,7 @@ def test_filter_addresses_by_street_letter(api_client: APIClient):
 @mark.django_db
 def test_filter_addresses_by_municipality(api_client: APIClient):
     municipality = MunicipalityFactory(name="Helsinki")
-    street = StreetFactory(municipality=municipality)
-    match = AddressFactory(street=street)
+    match = AddressFactory(municipality=municipality)
     AddressFactory()
     serializer = AddressSerializer()
     response = api_client.get(
@@ -106,8 +105,7 @@ def test_filter_addresses_by_municipality(api_client: APIClient):
 @mark.django_db
 def test_filter_addresses_by_municipality_code(api_client: APIClient):
     municipality = MunicipalityFactory(code="91")
-    street = StreetFactory(municipality=municipality)
-    match = AddressFactory(street=street)
+    match = AddressFactory(municipality=municipality)
     serializer = AddressSerializer()
     response = api_client.get(
         reverse("address:address-list"), {"municipalitycode": municipality.code}

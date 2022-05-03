@@ -50,6 +50,7 @@ class PostalCodeAreaFactory(DjangoModelFactory):
 
 class AddressFactory(DjangoModelFactory):
     street = SubFactory(StreetFactory)
+    municipality = SubFactory(MunicipalityFactory)
     number = Faker("building_number", locale="fi_FI")
     number_end = Faker("building_number", locale="fi_FI")
     letter = Faker("random_uppercase_letter", locale="fi_FI")

@@ -97,7 +97,7 @@ def test_import_addresses_creates_addresses():
     ]
     for number in [1, 2, 3, 4]:
         address = Address.objects.get(number=number, street=street)
-        assert address.street.municipality.name == "Järvenpää"
+        assert address.municipality.name == "Järvenpää"
         assert address.location.coords == approx(expected_locations[number - 1])
         assert address.location.srid == settings.PROJECTION_SRID
 

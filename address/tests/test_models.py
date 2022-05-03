@@ -20,7 +20,7 @@ def test_address_string_has_street_number_number_end_letter_municipality():
     address = AddressFactory()
     expected = (
         f"{address.street} {address.number}-{address.number_end}"
-        f"{address.letter}, {address.street.municipality}"
+        f"{address.letter}, {address.municipality}"
     )
     assert str(address) == expected
 
@@ -30,7 +30,7 @@ def test_address_string_without_letter():
     address = AddressFactory(letter="")
     expected = (
         f"{address.street} {address.number}-{address.number_end}"
-        f", {address.street.municipality}"
+        f", {address.municipality}"
     )
     assert str(address) == expected
 
@@ -39,8 +39,7 @@ def test_address_string_without_letter():
 def test_address_string_without_number_end():
     address = AddressFactory(number_end="")
     expected = (
-        f"{address.street} {address.number}{address.letter}"
-        f", {address.street.municipality}"
+        f"{address.street} {address.number}{address.letter}" f", {address.municipality}"
     )
     assert str(address) == expected
 
@@ -48,5 +47,5 @@ def test_address_string_without_number_end():
 @mark.django_db
 def test_address_string_representation_without_number_end_and_letter():
     address = AddressFactory(number_end="", letter="")
-    expected = f"{address.street} {address.number}, {address.street.municipality}"
+    expected = f"{address.street} {address.number}, {address.municipality}"
     assert str(address) == expected

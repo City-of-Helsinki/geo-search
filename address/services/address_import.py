@@ -29,10 +29,9 @@ class AddressImporter:
             muni_ids = [
                 muni[1][0].lower() for muni in MUNICIPALITIES[self.province].items()
             ]
-            streets = Street.objects.filter(municipality_id__in=muni_ids)
             Municipality.objects.filter(id__in=muni_ids).delete()
-            Street.objects.filter(municipality_id__in=muni_ids).delete()
-            Address.objects.filter(street_id__in=streets.values_list("id")).delete()
+            Street.objects.filter(addresses__municipality_id__in=muni_ids).delete()
+            Address.objects.filter(municipality_id__in=muni_ids).delete()
         else:
             Municipality.objects.all().delete()
             Street.objects.all().delete()
@@ -75,11 +74,13 @@ class AddressImporter:
         if not self._has_required_fields(feature):
             return []
 
-        # Create the street and municipality if they don't exist yet
+        # Create the municipality and street if they don't exist yet
+        municipality = self._create_municipality(feature["KUNTAKOODI"].value)
+
         street = self._create_street(
             feature["TIENIMI_SU"].value or "",
             feature["TIENIMI_RU"].value or "",
-            self._create_municipality(feature["KUNTAKOODI"].value),
+            municipality,
         )
 
         # Calculate a lookup table for the normals to avoid computing
@@ -89,16 +90,17 @@ class AddressImporter:
         # Construct addresses for each side of the street. They have to be done
         # separately since each side may have a different number of addresses.
         addresses = self._build_addresses_on_side(
-            street, feature, normals, right_side=True
+            street, municipality, feature, normals, right_side=True
         )
         addresses += self._build_addresses_on_side(
-            street, feature, normals, right_side=False
+            street, municipality, feature, normals, right_side=False
         )
         return addresses
 
     def _build_addresses_on_side(
         self,
         street: Street,
+        municipality: Municipality,
         feature: Feature,
         normals: Dict[float, Tuple[float, float]],
         right_side: bool,
@@ -134,7 +136,14 @@ class AddressImporter:
                 y=street_location.y + normal_y * ADDRESS_LOCATION_OFFSET_METERS,
                 srid=street_location.srid,
             )
-            addresses.append(Address(street=street, number=number, location=location))
+            addresses.append(
+                Address(
+                    street=street,
+                    municipality=municipality,
+                    number=number,
+                    location=location,
+                )
+            )
 
         return addresses
 
@@ -181,7 +190,7 @@ class AddressImporter:
             # Calculate the normal
             dx = end_x - start_x
             dy = end_y - start_y
-            length = sqrt(dx ** 2 + dy ** 2)
+            length = sqrt(dx**2 + dy**2)
             normal = -dy / length, dx / length
             # Associate with the distance for fast lookup of the
             # normal between the current start point and end point.

@@ -66,7 +66,7 @@ class AddressSerializer(serializers.ModelSerializer):
     street = StreetSerializer()
     postal_code_area = PostalCodeAreaSerializer()
     location = LocationField()
-    municipality = MunicipalitySerializer(source="street.municipality")
+    municipality = MunicipalitySerializer()
 
     class Meta:
         model = Address

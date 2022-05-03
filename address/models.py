@@ -46,6 +46,7 @@ class PostalCodeArea(TranslatableModel):
 
 
 class Address(models.Model):
+    municipality = models.ForeignKey(Municipality, models.CASCADE, db_index=True)
     street = models.ForeignKey(
         Street, models.CASCADE, db_index=True, related_name="addresses"
     )
@@ -68,7 +69,7 @@ class Address(models.Model):
             s += f"-{self.number_end}"
         if self.letter:
             s += str(self.letter)
-        return f"{s}, {self.street.municipality}"
+        return f"{s}, {self.municipality}"
 
     class Meta:
         verbose_name_plural = _("Addresses")

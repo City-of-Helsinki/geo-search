@@ -52,7 +52,7 @@ def test_address_serializer():
     serializer = AddressSerializer()
     actual = serializer.to_representation(address)
     street = address.street
-    municipality = street.municipality
+    municipality = address.municipality
     assert actual == {
         "street": {
             "name": {t.language_code: t.name for t in street.translations.all()},
