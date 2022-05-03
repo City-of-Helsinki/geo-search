@@ -41,16 +41,9 @@ if DEBUG and not SECRET_KEY:
     SECRET_KEY = "secret-for-debugging-only"
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
-try:
-    version = str(
-        subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip()
-    )
-except OSError:
-    version = "n/a"
-
 sentry_sdk.init(
     dsn=env.str("SENTRY_DSN"),
-    release=version,
+    release="n/a",
     environment=env("SENTRY_ENVIRONMENT"),
     integrations=[DjangoIntegration()],
 )
