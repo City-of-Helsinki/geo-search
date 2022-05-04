@@ -6,7 +6,7 @@ from typing import Any, Dict
 from unittest.mock import MagicMock, Mock
 
 from ..models import Address, Municipality, Street
-from ..services.address_import import delete_address_data, import_addresses
+from ..services.address_import import AddressImporter
 from ..tests.factories import AddressFactory, MunicipalityFactory, StreetFactory
 
 TEST_FEATURE_FIELDS = {
@@ -26,13 +26,15 @@ TEST_GEOMETRY = LineString(
     srid=3067,
 )
 
+TEST_PROVINCE = "uusimaa"
+
 
 @mark.django_db(transaction=True)
 def test_delete_address_data_removes_municipalities_streets_and_addresses():
     MunicipalityFactory()
     StreetFactory()
     AddressFactory()
-    delete_address_data()
+    AddressImporter().delete_address_data()
     assert not Municipality.objects.exists()
     assert not Street.objects.exists()
     assert not Address.objects.exists()
@@ -47,7 +49,7 @@ def test_import_addresses_does_nothing_if_street_name_is_missing():
             "TIENIMI_RU": None,
         }
     )
-    import_addresses([feature])
+    AddressImporter(TEST_PROVINCE).import_addresses([feature])
     assert not Address.objects.exists()
 
 
@@ -62,14 +64,14 @@ def test_import_addresses_does_nothing_if_street_number_is_missing():
             "VIIM_TAL_V": None,
         }
     )
-    import_addresses([feature])
+    AddressImporter(TEST_PROVINCE).import_addresses([feature])
     assert not Address.objects.exists()
 
 
 @mark.django_db
 def test_import_addresses_creates_municipalities():
     feature = _mock_feature({**TEST_FEATURE_FIELDS, "KUNTAKOODI": 49})
-    import_addresses([feature])
+    AddressImporter(TEST_PROVINCE).import_addresses([feature])
     assert Municipality.objects.translated(name="Espoo").count() == 1
 
 
@@ -78,14 +80,14 @@ def test_import_addresses_creates_streets():
     feature = _mock_feature(
         {**TEST_FEATURE_FIELDS, "KUNTAKOODI": 149, "TIENIMI_SU": "CreationTest"}
     )
-    import_addresses([feature])
+    AddressImporter(TEST_PROVINCE).import_addresses([feature])
     assert Street.objects.translated(name="CreationTest").count() == 1
 
 
 @mark.django_db
 def test_import_addresses_creates_addresses():
     feature = _mock_feature({**TEST_FEATURE_FIELDS, "KUNTAKOODI": 186})
-    import_addresses([feature])
+    AddressImporter(TEST_PROVINCE).import_addresses([feature])
     street = Street.objects.get()
     expected_locations = [
         (24.94235, 60.22301),  # number 1, left side
@@ -95,7 +97,7 @@ def test_import_addresses_creates_addresses():
     ]
     for number in [1, 2, 3, 4]:
         address = Address.objects.get(number=number, street=street)
-        assert address.street.municipality.name == "Järvenpää"
+        assert address.municipality.name == "Järvenpää"
         assert address.location.coords == approx(expected_locations[number - 1])
         assert address.location.srid == settings.PROJECTION_SRID
 

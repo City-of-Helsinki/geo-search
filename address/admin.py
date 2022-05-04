@@ -1,7 +1,7 @@
 from django.contrib import admin
 from parler.admin import TranslatableAdmin
 
-from .models import Address, Municipality, Street
+from .models import Address, Municipality, PostalCodeArea, Street
 
 
 @admin.register(Municipality)
@@ -11,6 +11,11 @@ class MunicipalityAdmin(TranslatableAdmin):
 
 @admin.register(Street)
 class StreetAdmin(TranslatableAdmin):
+    pass
+
+
+@admin.register(PostalCodeArea)
+class PostalCodeAreaAdmin(TranslatableAdmin):
     pass
 
 

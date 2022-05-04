@@ -10,10 +10,8 @@ from .factories import AddressFactory
 def test_import_postal_codes_updates_postal_codes_from_shapefile(paavo_shapefile):
     address = AddressFactory(
         location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID),
-        postal_code="",
-        post_office="",
     )
-    call_command("import_postal_codes", [paavo_shapefile])
+    call_command("import_postal_codes", None, [paavo_shapefile])
     address.refresh_from_db()
-    assert address.postal_code == "00100"
-    assert address.post_office == "Helsinki Keskusta - Etu-Töölö"
+    assert address.postal_code_area.postal_code == "00100"
+    assert address.postal_code_area.name == "Helsinki Keskusta - Etu-Töölö"

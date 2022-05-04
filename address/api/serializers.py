@@ -3,7 +3,7 @@ from parler_rest.fields import TranslatedFieldsField
 from parler_rest.serializers import TranslatableModelSerializer
 from rest_framework import serializers
 
-from ..models import Address, Municipality, Street
+from ..models import Address, Municipality, PostalCodeArea, Street
 from .fields import LocationField
 
 
@@ -45,20 +45,28 @@ class TranslatedModelSerializer(TranslatableModelSerializer):
 class MunicipalitySerializer(TranslatedModelSerializer):
     class Meta:
         model = Municipality
-        fields = ["translations"]
+        fields = ["code", "translations"]
 
 
 class StreetSerializer(TranslatedModelSerializer):
-    municipality = MunicipalitySerializer()
-
     class Meta:
         model = Street
-        fields = ["municipality", "translations"]
+        fields = [
+            "translations",
+        ]
+
+
+class PostalCodeAreaSerializer(TranslatedModelSerializer):
+    class Meta:
+        model = PostalCodeArea
+        fields = ["postal_code", "translations"]
 
 
 class AddressSerializer(serializers.ModelSerializer):
     street = StreetSerializer()
+    postal_code_area = PostalCodeAreaSerializer()
     location = LocationField()
+    municipality = MunicipalitySerializer()
 
     class Meta:
         model = Address
@@ -67,8 +75,8 @@ class AddressSerializer(serializers.ModelSerializer):
             "number",
             "number_end",
             "letter",
-            "postal_code",
-            "post_office",
+            "postal_code_area",
             "location",
             "modified_at",
+            "municipality",
         ]
