@@ -1,5 +1,7 @@
 FROM ubuntu:20.04
 
+COPY .gitconfig .
+
 WORKDIR /app
 
 RUN apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false update && \
