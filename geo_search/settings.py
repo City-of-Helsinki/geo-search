@@ -1,5 +1,4 @@
 import sentry_sdk
-import subprocess
 from django.utils.log import DEFAULT_LOGGING
 from django.utils.translation import gettext_lazy as _
 from environ import Env
@@ -57,11 +56,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "django.contrib.postgres",
     "corsheaders",
     "rest_framework",
     "rest_framework_api_key",
     "parler",
     "drf_spectacular",
+    "gisserver",
     # Local apps
     "address",
 ]
