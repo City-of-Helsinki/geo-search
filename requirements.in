@@ -1,5 +1,6 @@
 Django<4
 django-cors-headers
+django-gisserver
 django-environ
 django-parler
 django-parler-rest

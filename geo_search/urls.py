@@ -5,6 +5,7 @@ from django.views.decorators.http import require_GET
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from address import urls as addresses_urls
+from address.api.wfs_views import GeoWFSView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -15,6 +16,7 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="schema-docs",
     ),
+    path("wfs/geo/", GeoWFSView.as_view()),
 ]
 
 
