@@ -1,6 +1,9 @@
 FROM ubuntu:20.04
 
+# Fixes git vulnerability issue in openshift
 COPY .gitconfig .
+# Fixes git vulnerability issue locally
+COPY .gitconfig /etc/gitconfig
 
 WORKDIR /app
 
