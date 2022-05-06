@@ -1,4 +1,5 @@
 import sentry_sdk
+import subprocess
 from django.utils.log import DEFAULT_LOGGING
 from django.utils.translation import gettext_lazy as _
 from environ import Env
