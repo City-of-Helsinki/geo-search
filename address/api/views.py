@@ -7,8 +7,8 @@ from math import cos, pi
 from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from ..models import Address
-from .serializers import AddressSerializer
+from ..models import Address, PostalCodeArea
+from .serializers import AddressSerializer, PostalCodeAreaSerializer
 
 _list_parameters = [
     OpenApiParameter(
@@ -220,3 +220,8 @@ class AddressViewSet(ReadOnlyModelViewSet):
             location__intersects=buffer,
             location__distance_lte=(point, D(m=distance)),
         )
+
+
+class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
+    queryset = PostalCodeArea.objects.order_by("pk")
+    serializer_class = PostalCodeAreaSerializer
