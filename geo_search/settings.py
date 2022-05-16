@@ -1,4 +1,5 @@
 import sentry_sdk
+import subprocess
 from django.utils.log import DEFAULT_LOGGING
 from django.utils.translation import gettext_lazy as _
 from environ import Env
@@ -40,9 +41,16 @@ if DEBUG and not SECRET_KEY:
     SECRET_KEY = "secret-for-debugging-only"
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
+try:
+    version = str(
+        subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip()
+    )
+except OSError:
+    version = "n/a"
+
 sentry_sdk.init(
     dsn=env.str("SENTRY_DSN"),
-    release="n/a",
+    release=version,
     environment=env("SENTRY_ENVIRONMENT"),
     integrations=[DjangoIntegration()],
 )
