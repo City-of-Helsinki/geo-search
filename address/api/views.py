@@ -114,7 +114,7 @@ _list_parameters = [
 
 @extend_schema_view(list=extend_schema(parameters=_list_parameters))
 class AddressViewSet(ReadOnlyModelViewSet):
-    queryset = Address.objects.order_by("pk")
+    queryset = Address.objects.filter(pk__gte=0).order_by("pk")
     serializer_class = AddressSerializer
 
     def get_queryset(self) -> QuerySet:
@@ -223,5 +223,5 @@ class AddressViewSet(ReadOnlyModelViewSet):
 
 
 class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
-    queryset = PostalCodeArea.objects.order_by("pk")
+    queryset = PostalCodeArea.objects.filter(pk__gte=0).order_by("pk")
     serializer_class = PostalCodeAreaSerializer
