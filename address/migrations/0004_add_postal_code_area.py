@@ -8,7 +8,6 @@ import parler.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("address", "0003_address_post_office"),
     ]
