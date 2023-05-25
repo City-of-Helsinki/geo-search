@@ -126,7 +126,7 @@ PARLER_LANGUAGES = {None: ({"code": "fi"}, {"code": "sv"}, {"code": "en"})}
 # Static files (CSS, JavaScript, Images)
 STATIC_ROOT = env.str("STATIC_ROOT")
 STATIC_URL = env.str("STATIC_URL")
-STORAGES = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

@@ -4,6 +4,7 @@ from parler_rest.serializers import TranslatableModelSerializer
 from rest_framework import serializers
 
 from ..models import Address, Municipality, PostalCodeArea, Street
+from ..types import strtobool
 from .fields import LocationField
 
 
@@ -42,10 +43,29 @@ class TranslatedModelSerializer(TranslatableModelSerializer):
         return representation
 
 
-class MunicipalitySerializer(TranslatedModelSerializer):
+class TranslatedAreaModelSerializer(TranslatedModelSerializer):
+    area = serializers.SerializerMethodField()
+
+    def get_area(self, obj):
+        request = self.context.get("request")
+        if request:
+            query_params = request.query_params
+            show_area = strtobool(query_params.get("area", None))
+            if show_area:
+                geom_format = query_params.get("geom_format", "geojson")
+                if geom_format == "geojson":
+                    return {
+                        "type": "MultiPolygon",
+                        "coordinates": list(obj.area.coords),
+                    }
+                if geom_format == "ewkt":
+                    return obj.area.ewkt
+
+
+class MunicipalitySerializer(TranslatedAreaModelSerializer):
     class Meta:
         model = Municipality
-        fields = ["code", "translations"]
+        fields = ["code", "translations", "area"]
 
 
 class StreetSerializer(TranslatedModelSerializer):
@@ -56,10 +76,10 @@ class StreetSerializer(TranslatedModelSerializer):
         ]
 
 
-class PostalCodeAreaSerializer(TranslatedModelSerializer):
+class PostalCodeAreaSerializer(TranslatedAreaModelSerializer):
     class Meta:
         model = PostalCodeArea
-        fields = ["postal_code", "translations"]
+        fields = ["postal_code", "translations", "area"]
 
 
 class AddressSerializer(serializers.ModelSerializer):

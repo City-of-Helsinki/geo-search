@@ -17,6 +17,6 @@ class LocationField(serializers.Field):
 
     def to_representation(self, value) -> dict:
         return {
-            "type": "point",
+            "type": "Point",
             "coordinates": list(value.coords),
         }
