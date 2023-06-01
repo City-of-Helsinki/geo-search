@@ -8,7 +8,6 @@ ETRS_TM35FIN = CRS.from_srid(3067)
 
 
 class GeoWFSView(WFSView):
-
     xml_namespace = "https://paikkatietohaku.api.hel.fi/wfs"
 
     # The service metadata

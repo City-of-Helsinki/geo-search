@@ -21,6 +21,7 @@ def test_municipality_serializer():
     actual = serializer.to_representation(municipality)
     assert actual == {
         "code": municipality.code,
+        "area": None,
         "name": {t.language_code: t.name for t in municipality.translations.all()},
     }
 
@@ -42,6 +43,7 @@ def test_postal_code_area_serializer():
     actual = serializer.to_representation(postal_code_area)
     assert actual == {
         "postal_code": postal_code_area.postal_code,
+        "area": None,
         "name": {t.language_code: t.name for t in postal_code_area.translations.all()},
     }
 
@@ -62,17 +64,19 @@ def test_address_serializer():
         "letter": address.letter,
         "postal_code_area": {
             "postal_code": address.postal_code_area.postal_code,
+            "area": None,
             "name": {
                 t.language_code: t.name
                 for t in address.postal_code_area.translations.all()
             },
         },
         "location": {
-            "type": "point",
+            "type": "Point",
             "coordinates": [address.location.x, address.location.y],
         },
         "municipality": {
             "code": municipality.code,
+            "area": None,
             "name": {t.language_code: t.name for t in municipality.translations.all()},
         },
         "modified_at": address.modified_at.astimezone().isoformat(),

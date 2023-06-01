@@ -10,6 +10,9 @@ class Municipality(TranslatableModel):
     translations = TranslatedFields(
         name=models.CharField(_("Name"), max_length=100, db_index=True)
     )
+    area = models.MultiPolygonField(
+        srid=settings.PROJECTION_SRID, null=True, blank=True
+    )
 
     def __str__(self) -> str:
         return self.name

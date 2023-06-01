@@ -1,3 +1,4 @@
+import os
 import sentry_sdk
 import subprocess
 from django.utils.log import DEFAULT_LOGGING
@@ -5,6 +6,9 @@ from django.utils.translation import gettext_lazy as _
 from environ import Env
 from pathlib import Path
 from sentry_sdk.integrations.django import DjangoIntegration
+
+GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
+GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
 
 # Enable logging to console from our modules by configuring the root logger
 DEFAULT_LOGGING["loggers"][""] = {
@@ -52,6 +56,8 @@ sentry_sdk.init(
     dsn=env.str("SENTRY_DSN"),
     release=version,
     environment=env("SENTRY_ENVIRONMENT"),
+    traces_sample_rate=1.0,
+    send_default_pii=True,
     integrations=[DjangoIntegration()],
 )
 
@@ -114,7 +120,6 @@ LANGUAGE_CODE = "fi"
 LANGUAGES = (("fi", _("Finnish")), ("en", _("English")), ("sv", _("Swedish")))
 TIME_ZONE = "Europe/Helsinki"
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 PARLER_LANGUAGES = {None: ({"code": "fi"}, {"code": "sv"}, {"code": "en"})}
 
