@@ -13,12 +13,13 @@ jobs:
       DEBUG: True
       DATABASE_URL: postgis://postgres:postgres@localhost/geo-search
       DJANGO_SECRET_KEY: test-secret
+      PYTHON_VERSION: "3.11"
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
       with:
-        python-version: "3.10.0"
+        python-version: ${{ env.PYTHON_VERSION }}
     - name: Install required Ubuntu packages
       run: |
         sudo apt-get install gdal-bin
@@ -38,7 +39,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:13-3.1
+        image: postgis/postgis:15-3.3
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
