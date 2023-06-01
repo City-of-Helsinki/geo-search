@@ -115,8 +115,26 @@ _list_parameters = [
     ),
 ]
 
+_area_parameters = [
+    OpenApiParameter(
+        name="area",
+        location=OpenApiParameter.QUERY,
+        description="Return area-geometry when set to true or 1",
+        required=False,
+        type=bool,
+    ),
+    OpenApiParameter(
+        name="geom_format",
+        location=OpenApiParameter.QUERY,
+        description="Area geometry format. "
+        "Available values : geojson, ewkt. Default : geojson",
+        required=False,
+        type=str,
+    ),
+]
 
-@extend_schema_view(list=extend_schema(parameters=_list_parameters))
+
+@extend_schema_view(list=extend_schema(parameters=_list_parameters + _area_parameters))
 class AddressViewSet(ReadOnlyModelViewSet):
     queryset = Address.objects.filter(pk__gte=0).order_by("pk")
     serializer_class = AddressSerializer
@@ -226,11 +244,19 @@ class AddressViewSet(ReadOnlyModelViewSet):
         )
 
 
+@extend_schema_view(
+    list=extend_schema(parameters=_area_parameters),
+    retrieve=extend_schema(parameters=_area_parameters),
+)
 class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
     queryset = PostalCodeArea.objects.filter(pk__gte=0).order_by("pk")
     serializer_class = PostalCodeAreaSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(parameters=_area_parameters),
+    retrieve=extend_schema(parameters=_area_parameters),
+)
 class MunicipalityViewSet(ReadOnlyModelViewSet):
     queryset = Municipality.objects.filter(pk__gte=0).order_by("pk")
     serializer_class = MunicipalitySerializer
