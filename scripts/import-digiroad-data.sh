@@ -3,17 +3,17 @@
 set -e
 available_provinces="'uusimaa' and 'varsinais-suomi'"
 
-if [ $# == 0 ]
+if [ $# -eq 0 ]
 then
     echo "No province argument supplied."
     echo "Available provinces are ${available_provinces}."
     exit 0
 fi
 
-if [ $1 == "uusimaa" ]
+if [ "$1" = "uusimaa" ]
 then
     package_name="UUSIMAA.zip"
-elif [ $1 == "varsinais-suomi" ]
+elif [ "$1" = "varsinais-suomi" ]
 then
     package_name="VARSINAIS-SUOMI.zip"
 else
