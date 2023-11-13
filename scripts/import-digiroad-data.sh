@@ -23,7 +23,7 @@ fi
 
 echo "Importing Digiroad data for province $1.";
 
-DATA_URL="https://ava.vaylapilvi.fi/ava/Tie/Digiroad/Aineistojulkaisut/latest/Maakuntajako_DIGIROAD_R_EUREF-FIN/${package_name}"
+DATA_URL="https://ava.vaylapilvi.fi/ava/Tie/Digiroad/Aineistojulkaisut/latest/Maakuntajako_Digiroad_R/${package_name}"
 # Directory where the data will be downloaded and extracted
 DATA_DIR=/tmp/digiroad
 
