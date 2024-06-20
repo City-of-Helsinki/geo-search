@@ -23,7 +23,7 @@ fi
 
 echo "Importing Digiroad data for province $1.";
 
-DATA_URL="https://ava.vaylapilvi.fi/ava/Tie/Digiroad/Aineistojulkaisut/latest/Maakuntajako_Digiroad_R/${package_name}"
+DATA_URL="https://ava.vaylapilvi.fi/ava/Tie/Digiroad/Aineistojulkaisut/latest/Maakuntajako_digiroad_R/${package_name}"
 # Directory where the data will be downloaded and extracted
 DATA_DIR=/tmp/digiroad
 
@@ -40,7 +40,7 @@ CONVERTED_DIR=$DATA_DIR/converted
 
 # Download the source data
 mkdir -p $DATA_DIR
-curl "$DATA_URL" -o $DATA_DIR/data.zip
+curl -o $DATA_DIR/data.zip $DATA_URL
 
 # Extract the shapefiles from the archive
 rm -rf $EXTRACTED_DIR
