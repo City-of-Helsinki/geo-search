@@ -85,7 +85,7 @@ class AddressImporter:
 
         # Calculate a lookup table for the normals to avoid computing
         # them multiple times for the same geometry.
-        normals = self._compute_normals(feature.geom.geos)
+        normals = self._compute_normals(feature.geom.geos.simplify())
 
         # Construct addresses for each side of the street. They have to be done
         # separately since each side may have a different number of addresses.
