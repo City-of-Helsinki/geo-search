@@ -6,7 +6,7 @@
 #
 asttokens==2.4.1
     # via stack-data
-black==24.4.2
+black==24.8.0
     # via -r requirements-dev.in
 build==1.2.1
     # via pip-tools
@@ -14,17 +14,17 @@ click==8.1.7
     # via
     #   black
     #   pip-tools
-coverage[toml]==7.5.3
+coverage[toml]==7.6.1
     # via pytest-cov
 decorator==5.1.1
     # via ipython
 executing==2.0.1
     # via stack-data
-flake8==7.1.0
+flake8==7.1.1
     # via -r requirements-dev.in
 iniconfig==2.0.0
     # via pytest
-ipython==8.25.0
+ipython==8.26.0
     # via -r requirements-dev.in
 isort==5.13.2
     # via -r requirements-dev.in
@@ -57,9 +57,9 @@ prompt-toolkit==3.0.47
     # via ipython
 ptyprocess==0.7.0
     # via pexpect
-pure-eval==0.2.2
+pure-eval==0.2.3
     # via stack-data
-pycodestyle==2.12.0
+pycodestyle==2.12.1
     # via flake8
 pyflakes==3.2.0
     # via flake8
@@ -69,7 +69,7 @@ pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
-pytest==8.2.2
+pytest==8.3.2
     # via
     #   -r requirements-dev.in
     #   pytest-cov
@@ -90,7 +90,7 @@ typing-extensions==4.12.2
     # via ipython
 wcwidth==0.2.13
     # via prompt-toolkit
-wheel==0.43.0
+wheel==0.44.0
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:

@@ -8,17 +8,17 @@ asgiref==3.8.1
     # via
     #   django
     #   django-cors-headers
-attrs==23.2.0
+attrs==24.2.0
     # via
     #   jsonschema
     #   referencing
-certifi==2024.6.2
+certifi==2024.7.4
     # via sentry-sdk
 defusedxml==0.7.1
     # via
     #   django-gisserver
     #   djangorestframework-xml
-django==5.0.6
+django==5.0.8
     # via
     #   -r requirements.in
     #   django-cors-headers
@@ -27,11 +27,11 @@ django==5.0.6
     #   django-parler-rest
     #   djangorestframework
     #   drf-spectacular
-django-cors-headers==4.3.1
+django-cors-headers==4.4.0
     # via -r requirements.in
 django-environ==0.11.2
     # via -r requirements.in
-django-gisserver==1.3.0
+django-gisserver==1.4.0
     # via -r requirements.in
 django-parler==2.3
     # via
@@ -39,7 +39,7 @@ django-parler==2.3
     #   django-parler-rest
 django-parler-rest==2.2
     # via -r requirements.in
-djangorestframework==3.15.1
+djangorestframework==3.15.2
     # via
     #   -r requirements.in
     #   django-parler-rest
@@ -52,17 +52,17 @@ drf-spectacular==0.27.2
     # via -r requirements.in
 factory-boy==3.3.0
     # via -r requirements.in
-faker==25.8.0
+faker==26.2.0
     # via factory-boy
 inflection==0.5.1
     # via drf-spectacular
-jsonschema==4.22.0
+jsonschema==4.23.0
     # via drf-spectacular
 jsonschema-specifications==2023.12.1
     # via jsonschema
 lru-dict==1.3.0
     # via django-gisserver
-orjson==3.10.5
+orjson==3.10.6
     # via django-gisserver
 packaging==24.1
     # via djangorestframework-api-key
@@ -70,25 +70,25 @@ psycopg2==2.9.9
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via faker
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via drf-spectacular
 referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
-rpds-py==0.18.1
+rpds-py==0.20.0
     # via
     #   jsonschema
     #   referencing
-sentry-sdk==2.5.1
+sentry-sdk==2.12.0
     # via -r requirements.in
 six==1.16.0
     # via python-dateutil
-sqlparse==0.5.0
+sqlparse==0.5.1
     # via django
 uritemplate==4.1.1
     # via drf-spectacular
-urllib3==2.2.1
+urllib3==2.2.2
     # via sentry-sdk
-whitenoise==6.6.0
+whitenoise==6.7.0
     # via -r requirements.in
