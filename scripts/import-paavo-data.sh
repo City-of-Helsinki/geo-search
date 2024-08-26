@@ -24,7 +24,7 @@ fi
 echo "Importing Paavo data for province $1.";
 
 # URL to Paavo WFS service
-DATA_URL="http://geo.stat.fi/geoserver/wfs?SERVICE=wfs&version=1.0.0&request=GetFeature&srsName=EPSG:3067&outputFormat=SHAPE-ZIP&typeNames=pno_meri_2022&bbox=${bbox}"
+DATA_URL="https://geo.stat.fi/geoserver/wfs?SERVICE=wfs&version=1.0.0&request=GetFeature&srsName=EPSG:3067&outputFormat=SHAPE-ZIP&typeNames=pno_meri_2024&bbox=${bbox}"
 
 DATA_DIR=/tmp/paavo
 
