@@ -40,38 +40,6 @@ _list_parameters = [
         type=str,
     ),
     OpenApiParameter(
-        name="municipality",
-        location=OpenApiParameter.QUERY,
-        description=(
-            "Municipality name in Finnish or Swedish. "
-            'E.g. "Helsinki" or "Helsingfors".'
-        ),
-        required=False,
-        type=str,
-    ),
-    OpenApiParameter(
-        name="municipalitycode",
-        location=OpenApiParameter.QUERY,
-        description='Municipality code, e.g. "91".',
-        required=False,
-        type=str,
-    ),
-    OpenApiParameter(
-        name="postalcode",
-        location=OpenApiParameter.QUERY,
-        description='Postal code, e.g. "00100".',
-        required=False,
-        type=str,
-    ),
-    OpenApiParameter(
-        name="postalcodearea",
-        location=OpenApiParameter.QUERY,
-        description='Postal code area name in Finnish or Swedish. "'
-        'E.g. "Lappohja" or "Lappvik"',
-        required=False,
-        type=str,
-    ),
-    OpenApiParameter(
         name="bbox",
         location=OpenApiParameter.QUERY,
         description=(
@@ -133,8 +101,53 @@ _area_parameters = [
     ),
 ]
 
+_postal_code_parameters = [
+    OpenApiParameter(
+        name="postalcode",
+        location=OpenApiParameter.QUERY,
+        description='Postal code, e.g. "00100".',
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
+        name="postalcodearea",
+        location=OpenApiParameter.QUERY,
+        description='Postal code area name in Finnish or Swedish. "'
+        'E.g. "Lappohja" or "Lappvik"',
+        required=False,
+        type=str,
+    ),
+]
 
-@extend_schema_view(list=extend_schema(parameters=_list_parameters + _area_parameters))
+_municipality_parameters = [
+    OpenApiParameter(
+        name="municipality",
+        location=OpenApiParameter.QUERY,
+        description=(
+            "Municipality name in Finnish or Swedish. "
+            'E.g. "Helsinki" or "Helsingfors".'
+        ),
+        required=False,
+        type=str,
+    ),
+    OpenApiParameter(
+        name="municipalitycode",
+        location=OpenApiParameter.QUERY,
+        description='Municipality code, e.g. "91".',
+        required=False,
+        type=str,
+    ),
+]
+
+
+@extend_schema_view(
+    list=extend_schema(
+        parameters=_list_parameters
+        + _area_parameters
+        + _postal_code_parameters
+        + _municipality_parameters
+    )
+)
 class AddressViewSet(ReadOnlyModelViewSet):
     queryset = Address.objects.filter(pk__gte=0).order_by("pk")
     serializer_class = AddressSerializer
@@ -245,12 +258,48 @@ class AddressViewSet(ReadOnlyModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(parameters=_area_parameters),
+    list=extend_schema(
+        parameters=_area_parameters + _postal_code_parameters + _municipality_parameters
+    ),
     retrieve=extend_schema(parameters=_area_parameters),
 )
 class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
     queryset = PostalCodeArea.objects.filter(pk__gte=0).order_by("pk")
     serializer_class = PostalCodeAreaSerializer
+
+    def get_queryset(self) -> QuerySet:
+        areas = self.queryset
+        areas = self._filter_by_municipality(areas)
+        areas = self._filter_by_municipality_code(areas)
+        areas = self._filter_by_postal_code(areas)
+        areas = self._filter_by_post_office(areas)
+        return areas
+
+    def _filter_by_municipality(self, areas: QuerySet) -> QuerySet:
+        municipality = self.request.query_params.get("municipality")
+        if municipality is None:
+            return areas
+        return areas.filter(
+            municipality__translations__name__iexact=municipality
+        ).distinct()
+
+    def _filter_by_municipality_code(self, areas: QuerySet) -> QuerySet:
+        municipality_code = self.request.query_params.get("municipalitycode")
+        if municipality_code is None:
+            return areas
+        return areas.filter(municipality__code__iexact=municipality_code).distinct()
+
+    def _filter_by_postal_code(self, areas: QuerySet) -> QuerySet:
+        postal_code = self.request.query_params.get("postalcode")
+        if postal_code is None:
+            return areas
+        return areas.filter(postal_code__iexact=postal_code)
+
+    def _filter_by_post_office(self, areas: QuerySet) -> QuerySet:
+        postal_code_area = self.request.query_params.get("postalcodearea")
+        if postal_code_area is None:
+            return areas
+        return areas.filter(translations__name__iexact=postal_code_area).distinct()
 
 
 @extend_schema_view(

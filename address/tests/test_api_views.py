@@ -4,7 +4,7 @@ from django.urls import reverse
 from pytest import mark
 from rest_framework.test import APIClient
 
-from ..api.serializers import AddressSerializer
+from ..api.serializers import AddressSerializer, PostalCodeAreaSerializer
 from ..tests.factories import (
     AddressFactory,
     MunicipalityFactory,
@@ -249,3 +249,72 @@ def test_filter_addresses_returns_bad_request_if_distance_is_invalid(
         {"lat": "60.1666", "lon": "24.9428", "distance": ""},
     )
     assert response.status_code == 400
+
+
+@mark.django_db
+def test_filter_postal_area_codes_by_municipality(api_client: APIClient):
+    municipality = MunicipalityFactory(name="Helsinki")
+    match = PostalCodeAreaFactory(municipality=municipality)
+    serializer = PostalCodeAreaSerializer()
+    response = api_client.get(
+        reverse("address:postalcodearea-list"), {"municipality": municipality.name}
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }
+
+
+@mark.django_db
+def test_filter_postal_area_codes_by_municipality_code(api_client: APIClient):
+    municipality = MunicipalityFactory(code="91")
+    match = PostalCodeAreaFactory(municipality=municipality)
+    serializer = PostalCodeAreaSerializer()
+    response = api_client.get(
+        reverse("address:postalcodearea-list"), {"municipalitycode": municipality.code}
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }
+
+
+@mark.django_db
+def test_filter_postal_area_codes_by_postal_code(api_client: APIClient):
+    PostalCodeAreaFactory(postal_code="99999")
+    match = PostalCodeAreaFactory(postal_code="00100")
+    serializer = PostalCodeAreaSerializer()
+    response = api_client.get(
+        reverse("address:postalcodearea-list"),
+        {"postalcode": match.postal_code},
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }
+
+
+@mark.django_db
+def test_filter_postal_area_codes_by_post_office(api_client: APIClient):
+    match = PostalCodeAreaFactory(name="Askola")
+    serializer = PostalCodeAreaSerializer()
+    response = api_client.get(
+        reverse("address:postalcodearea-list"),
+        {"postalcodearea": match.name},
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }

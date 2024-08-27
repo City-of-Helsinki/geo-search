@@ -15,3 +15,5 @@ def test_import_postal_codes_updates_postal_codes_from_shapefile(paavo_shapefile
     address.refresh_from_db()
     assert address.postal_code_area.postal_code == "00100"
     assert address.postal_code_area.name == "Helsinki Keskusta - Etu-Töölö"
+    assert address.postal_code_area.municipality.code == "91"
+    assert address.postal_code_area.area is not None
