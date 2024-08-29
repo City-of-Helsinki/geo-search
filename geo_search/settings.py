@@ -153,8 +153,24 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Service for searching geospatial information.",
     "SERVE_INCLUDE_SCHEMA": False,
     "VERSION": None,
+    "AUTHENTICATION_WHITELIST": [],
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Api-Key",
+            }
+        }
+    },
+    "SECURITY": [
+        {
+            "ApiKeyAuth": [],
+        }
+    ],
 }
 
 REQUIRE_AUTHORIZATION = env.bool("REQUIRE_AUTHORIZATION")
+API_KEY_CUSTOM_HEADER = "HTTP_API_KEY"
 
 USE_X_FORWARDED_HOST = True

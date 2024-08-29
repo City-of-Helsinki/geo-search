@@ -22,7 +22,7 @@ def test_anonymous_client_can_access_api_if_authorization_is_not_required():
 @mark.usefixtures("authorization_required")
 def test_anonymous_client_can_access_api_with_valid_api_key():
     valid_api_key = APIKey.objects.create_key(name="test")[-1]
-    api_client = APIClient(HTTP_AUTHORIZATION=f"Api-Key {valid_api_key}")
+    api_client = APIClient(HTTP_API_KEY=valid_api_key)
     response = api_client.get("/v1/")
     assert response.status_code == 200
 
@@ -31,7 +31,7 @@ def test_anonymous_client_can_access_api_with_valid_api_key():
 @mark.usefixtures("authorization_required")
 def test_anonymous_client_cannot_access_api_with_revoked_api_key():
     revoked_api_key = APIKey.objects.create_key(name="test", revoked=True)[-1]
-    api_client = APIClient(HTTP_AUTHORIZATION=f"Api-Key {revoked_api_key}")
+    api_client = APIClient(HTTP_API_KEY=revoked_api_key)
     response = api_client.get("/v1/")
     assert response.status_code == 403
 
