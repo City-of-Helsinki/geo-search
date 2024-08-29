@@ -11,7 +11,7 @@ from rest_framework_api_key.models import APIKey
 @fixture
 def api_client() -> APIClient:
     api_key = APIKey.objects.create_key(name="test")[-1]
-    return APIClient(HTTP_AUTHORIZATION=f"Api-Key {api_key}")
+    return APIClient(HTTP_API_KEY=api_key)
 
 
 @fixture
