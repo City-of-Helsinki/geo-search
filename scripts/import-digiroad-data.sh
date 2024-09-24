@@ -3,17 +3,17 @@
 set -e
 available_provinces="'uusimaa' and 'varsinais-suomi'"
 
-if [ $# == 0 ]
+if [ $# -eq 0 ]
 then
     echo "No province argument supplied."
     echo "Available provinces are ${available_provinces}."
     exit 0
 fi
 
-if [ $1 == "uusimaa" ]
+if [ "$1" = "uusimaa" ]
 then
     package_name="UUSIMAA.zip"
-elif [ $1 == "varsinais-suomi" ]
+elif [ "$1" = "varsinais-suomi" ]
 then
     package_name="VARSINAIS-SUOMI.zip"
 else
@@ -23,7 +23,7 @@ fi
 
 echo "Importing Digiroad data for province $1.";
 
-DATA_URL="https://ava.vaylapilvi.fi/ava/Tie/Digiroad/Aineistojulkaisut/latest/Maakuntajako_DIGIROAD_R_EUREF-FIN/${package_name}"
+DATA_URL="https://ava.vaylapilvi.fi/ava/Tie/Digiroad/Aineistojulkaisut/latest/Maakuntajako_digiroad_R/${package_name}"
 # Directory where the data will be downloaded and extracted
 DATA_DIR=/tmp/digiroad
 
@@ -40,7 +40,7 @@ CONVERTED_DIR=$DATA_DIR/converted
 
 # Download the source data
 mkdir -p $DATA_DIR
-curl "$DATA_URL" -o $DATA_DIR/data.zip
+curl -o $DATA_DIR/data.zip $DATA_URL
 
 # Extract the shapefiles from the archive
 rm -rf $EXTRACTED_DIR

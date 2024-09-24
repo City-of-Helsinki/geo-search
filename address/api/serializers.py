@@ -79,7 +79,7 @@ class StreetSerializer(TranslatedModelSerializer):
 class PostalCodeAreaSerializer(TranslatedAreaModelSerializer):
     class Meta:
         model = PostalCodeArea
-        fields = ["postal_code", "translations", "area"]
+        fields = ["postal_code", "translations", "area", "municipality"]
 
 
 class AddressSerializer(serializers.ModelSerializer):

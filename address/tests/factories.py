@@ -37,6 +37,7 @@ class StreetFactory(DjangoModelFactory):
 class PostalCodeAreaFactory(DjangoModelFactory):
     postal_code = Faker("postcode", locale="fi_FI")
     name = Faker("street_name", locale="fi_FI")
+    municipality = SubFactory(MunicipalityFactory)
 
     @post_generation
     def post(self, *_, **__):

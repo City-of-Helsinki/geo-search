@@ -6,7 +6,7 @@ from typing import Iterable
 
 from address.constants import MUNICIPALITIES
 
-from ..models import Address, PostalCodeArea
+from ..models import Address, Municipality, PostalCodeArea
 
 logger = logging.getLogger(__name__)
 
@@ -42,9 +42,12 @@ class PostalCodeImporter:
         # Update postal code for all addresses within each postal code area
         for feature in features:
             geometry = feature.geom.geos
-            postal_code = feature["posti_alue"].value
-            post_office_fi = feature["nimi"].value
-            post_office_sv = feature["namn"].value
+            postal_code = (
+                feature["posti_alue"].value.strip() if feature["posti_alue"] else None
+            )
+            post_office_fi = feature["nimi"].value.strip() if feature["nimi"] else None
+            post_office_sv = feature["namn"].value.strip() if feature["namn"] else None
+            municipality_id = feature["kuntanro"].value
 
             postal_code_area, _ = PostalCodeArea.objects.get_or_create(
                 postal_code=postal_code
@@ -53,6 +56,13 @@ class PostalCodeImporter:
             postal_code_area.name = post_office_sv
             postal_code_area.set_current_language("fi")
             postal_code_area.name = post_office_fi
+
+            try:
+                municipality = Municipality.objects.filter(code=municipality_id).first()
+            except Municipality.DoesNotExist:
+                municipality = None
+            postal_code_area.municipality = municipality
+
             if geometry.geom_type == "Polygon":
                 area = MultiPolygon(geometry, srid=3067)
             else:

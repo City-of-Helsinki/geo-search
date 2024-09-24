@@ -80,10 +80,10 @@ once, so make sure you copy it.
 
 ### Making authorized requests
 
-Clients must pass their API key via the `Authorization` header.
+Clients must pass their API key via header.
 It must be formatted as follows:
 
-    Authorization: Api-Key <API_KEY>
+    Api-Key: <API_KEY>
 
 Where `<API_KEY>` refers to the full generated API key.
 

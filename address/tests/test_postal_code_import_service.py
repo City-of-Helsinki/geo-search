@@ -5,6 +5,7 @@ from pytest import mark
 from typing import Any, Dict
 from unittest.mock import MagicMock, Mock
 
+from ..models import Municipality
 from ..services.postal_code_import import PostalCodeImporter
 from ..tests.factories import AddressFactory
 
@@ -14,14 +15,22 @@ TEST_GEOMETRY.srid = settings.PROJECTION_SRID
 
 @mark.django_db
 def test_import_postal_codes():
+    municipality = Municipality.objects.create(code=91, id="helsinki")
     address = AddressFactory(
         location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID),
+        municipality=municipality,
     )
     postal_code = "00100"
     post_office = "Helsinki Keskusta - Etu-Töölö"
     post_office_sv = "Helsingfors centrum - Främre Tölö"
+
     feature = _mock_feature(
-        {"posti_alue": postal_code, "nimi": post_office, "namn": post_office_sv}
+        {
+            "posti_alue": postal_code,
+            "nimi": post_office,
+            "namn": post_office_sv,
+            "kuntanro": municipality.code,
+        }
     )
     PostalCodeImporter().import_postal_codes([feature])
     address.refresh_from_db()
@@ -30,6 +39,7 @@ def test_import_postal_codes():
     assert address.postal_code_area.name == post_office_sv
     address.postal_code_area.set_current_language("fi")
     assert address.postal_code_area.name == post_office
+    assert address.postal_code_area.municipality == municipality
 
 
 @mark.django_db
@@ -39,7 +49,12 @@ def test_import_postal_codes_does_not_update_postal_code_if_outside(paavo_shapef
         location=Point(x=27, y=61, srid=settings.PROJECTION_SRID),
     )
     feature = _mock_feature(
-        {"posti_alue": "00100", "nimi": "Helsinki", "namn": "Helsingfors"}
+        {
+            "posti_alue": "00100",
+            "nimi": "Helsinki",
+            "namn": "Helsingfors",
+            "kuntanro": 91,
+        }
     )
     PostalCodeImporter().import_postal_codes([feature])
     address.refresh_from_db()

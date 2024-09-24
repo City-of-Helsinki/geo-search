@@ -150,11 +150,36 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Geospatial Search API",
-    "DESCRIPTION": "Service for searching geospatial information.",
+    "DESCRIPTION": "Service for searching geospatial information. "
+    "To request an API-Key, email palvelukartta@hel.fi.",
     "SERVE_INCLUDE_SCHEMA": False,
-    "VERSION": None,
+    "VERSION": "v1",
+    "CONTACT": {
+        "name": "City of Helsinki",
+        "url": "https://www.hel.fi",
+    },
+    "LICENSE": {
+        "name": "MIT",
+        "url": "https://opensource.org/license/MIT",
+    },
+    "AUTHENTICATION_WHITELIST": [],
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Api-Key",
+            }
+        }
+    },
+    "SECURITY": [
+        {
+            "ApiKeyAuth": [],
+        }
+    ],
 }
 
 REQUIRE_AUTHORIZATION = env.bool("REQUIRE_AUTHORIZATION")
+API_KEY_CUSTOM_HEADER = "HTTP_API_KEY"
 
 USE_X_FORWARDED_HOST = True

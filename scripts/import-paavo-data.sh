@@ -3,17 +3,17 @@
 set -e
 available_provinces="'uusimaa' and 'varsinais-suomi'"
 
-if [ $# == 0 ]
+if [ $# -eq 0 ]
 then
     echo "No province argument supplied."
     echo "Available provinces are ${available_provinces}."
     exit 0
 fi
 
-if [ $1 == "uusimaa" ]
+if [ "$1" = "uusimaa" ]
 then
     bbox="267392.57814054575,6636189.158504381,476288.57814054575,6747293.158504381"
-elif [ $1 == "varsinais-suomi" ]
+elif [ "$1" = "varsinais-suomi" ]
 then
     bbox="125189.83,6611707.59,334187.32,6781558.98"
 else
@@ -24,7 +24,7 @@ fi
 echo "Importing Paavo data for province $1.";
 
 # URL to Paavo WFS service
-DATA_URL="http://geo.stat.fi/geoserver/wfs?SERVICE=wfs&version=1.0.0&request=GetFeature&srsName=EPSG:3067&outputFormat=SHAPE-ZIP&typeNames=pno_meri_2022&bbox=${bbox}"
+DATA_URL="https://geo.stat.fi/geoserver/wfs?SERVICE=wfs&version=1.0.0&request=GetFeature&srsName=EPSG:3067&outputFormat=SHAPE-ZIP&typeNames=pno_meri_2024&bbox=${bbox}"
 
 DATA_DIR=/tmp/paavo
 
