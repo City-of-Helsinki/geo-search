@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2024-09-24
+
+### What's Changed
+* Fix postal code import test by @mhieta in ([94bdc97](https://github.com/City-of-Helsinki/geo-search/commit/94bdc973c8aafaf9859e08fb4453e722027be953))
+
 ## [1.1.0] - 2024-09-24
 
 ### What's Changed
