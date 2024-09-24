@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.0.0...geo-search-v1.0.1) (2024-09-24)
+
+
+### Bug Fixes
+
+* requirements.txt to reduce vulnerabilities ([19a2ec5](https://github.com/City-of-Helsinki/geo-search/commit/19a2ec5e7e849d86adead11e9704ccf3ffb25000))
+
 ## [Unreleased]
 
 ## [1.1.1] - 2024-09-24
