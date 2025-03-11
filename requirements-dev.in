@@ -1,8 +1,6 @@
-black
-flake8
 ipython
-isort
 pip-tools
 pytest
 pytest-cov
 pytest-django
+ruff==v0.9.10 # sync with .pre-commit-config.yaml
