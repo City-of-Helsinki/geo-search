@@ -1,8 +1,9 @@
+from typing import Any
+
 from django.conf import settings
 from django.http import HttpRequest
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_api_key.permissions import HasAPIKey
-from typing import Any
 
 
 class IsAuthorized(IsAuthenticated, HasAPIKey):

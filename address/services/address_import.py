@@ -1,10 +1,11 @@
 from bisect import bisect_left
-from django.conf import settings
-from django.contrib.gis.gdal.feature import Feature
-from django.contrib.gis.geos import LineString, MultiPoint, Point
 from functools import lru_cache
 from math import sqrt
 from typing import Dict, Iterable, List, Tuple
+
+from django.conf import settings
+from django.contrib.gis.gdal.feature import Feature
+from django.contrib.gis.geos import LineString, MultiPoint, Point
 
 from address.constants import MUNICIPALITIES
 from address.models import Address, Municipality, Street

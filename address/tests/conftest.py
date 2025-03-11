@@ -1,8 +1,9 @@
+from pathlib import Path
+
 from django.contrib.gis.geos import Point
 from factory.faker import Faker as FactoryBoyFaker
 from faker import Faker
 from faker.providers import BaseProvider
-from pathlib import Path
 from pytest import fixture
 from rest_framework.test import APIClient
 from rest_framework_api_key.models import APIKey

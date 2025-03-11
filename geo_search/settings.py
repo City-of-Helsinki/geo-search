@@ -1,10 +1,11 @@
 import os
-import sentry_sdk
 import subprocess
+from pathlib import Path
+
+import sentry_sdk
 from django.utils.log import DEFAULT_LOGGING
 from django.utils.translation import gettext_lazy as _
 from environ import Env
-from pathlib import Path
 from sentry_sdk.integrations.django import DjangoIntegration
 
 GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")

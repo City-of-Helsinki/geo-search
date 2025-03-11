@@ -3,10 +3,11 @@ This management command imports addresses from Paavo data:
 https://www.stat.fi/org/avoindata/paikkatietoaineistot/paavo.html
 """
 
-from django.contrib.gis.gdal import DataSource
-from django.core.management.base import BaseCommand
 from pathlib import Path
 from time import time
+
+from django.contrib.gis.gdal import DataSource
+from django.core.management.base import BaseCommand
 
 from ...services.postal_code_import import PostalCodeImporter
 

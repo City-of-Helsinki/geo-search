@@ -1,8 +1,9 @@
 import logging
+from typing import Iterable
+
 from django.conf import settings
 from django.contrib.gis.gdal.feature import Feature
 from django.contrib.gis.geos import MultiPolygon
-from typing import Iterable
 
 from ..models import Address, Municipality
 
