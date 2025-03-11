@@ -44,7 +44,7 @@ curl -o $DATA_DIR/data.zip $DATA_URL
 
 # Extract the shapefiles from the archive
 rm -rf $EXTRACTED_DIR
-unzip $DATA_DIR/data.zip $SHAPEFILE_PATTERN -d $EXTRACTED_DIR
+unzip $DATA_DIR/data.zip "$SHAPEFILE_PATTERN" -d $EXTRACTED_DIR
 
 # Remove the measurements (M coordinate) from each shapefile.
 # This is done because Django's OGRGeomType classogr doesn't support LineStringZM geometries:
@@ -54,11 +54,11 @@ mkdir -p $CONVERTED_DIR
 shapefiles=$(find $EXTRACTED_DIR -type f -name "DR_LINKK*.shp")
 for source_file in $shapefiles; do
   target_file=$(echo "$source_file" | sed "s:$EXTRACTED_DIR/:$CONVERTED_DIR/:")
-  mkdir -p $(dirname $target_file)
+  mkdir -p "$(dirname "$target_file")"
   echo "Converting $source_file -> $target_file..."
-  ogr2ogr -f "ESRI Shapefile" $target_file $source_file -dim XYZ
+  ogr2ogr -f "ESRI Shapefile" "$target_file" "$source_file" -dim XYZ
 done
 
 # Run the management command with all the shapefiles as arguments
 SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd)"
-python "$SCRIPT_DIR/../manage.py" import_addresses $(find $CONVERTED_DIR -type f -name "DR_LINKK*.shp") $1
+python "$SCRIPT_DIR/../manage.py" import_addresses "$(find $CONVERTED_DIR -type f -name "DR_LINKK*.shp")" "$1"
