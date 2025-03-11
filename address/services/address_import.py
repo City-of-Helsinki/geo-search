@@ -42,7 +42,7 @@ class AddressImporter:
         """Create addresses from the given features."""
         addresses = []
         num_addresses = 0
-        for i, feature in enumerate(features, start=1):
+        for _i, feature in enumerate(features, start=1):
             feature_addresses = self._build_addresses_from_feature(feature)
             num_addresses += len(feature_addresses)
             addresses.extend(feature_addresses)
@@ -216,7 +216,7 @@ class AddressImporter:
             return -x, -y
         return x, y
 
-    @lru_cache(maxsize=None)
+    @lru_cache(maxsize=None)  # noqa: B019
     def _create_municipality(self, municipality_id: int) -> Municipality:
         """Create a new municipality if it does not exist already, and return it."""
         municipality_fi, municipality_sv = MUNICIPALITIES[self.province][
@@ -232,7 +232,7 @@ class AddressImporter:
         municipality.save()
         return municipality
 
-    @lru_cache(maxsize=None)
+    @lru_cache(maxsize=None)  # noqa: B019
     def _create_street(
         self, name_fi: str, name_sv: str, municipality: Municipality
     ) -> Street:
