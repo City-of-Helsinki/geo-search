@@ -41,4 +41,4 @@ unzip $DATA_DIR/data.zip -d $EXTRACTED_DIR
 
 # Run the management command with all the shapefiles as arguments
 SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd)"
-python "$SCRIPT_DIR/../manage.py" import_postal_codes $1 $(find $EXTRACTED_DIR -type f -name "*.shp")
+python "$SCRIPT_DIR/../manage.py" import_postal_codes "$1" "$(find $EXTRACTED_DIR -type f -name "*.shp")"
