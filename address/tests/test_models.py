@@ -39,7 +39,7 @@ def test_address_string_without_letter():
 def test_address_string_without_number_end():
     address = AddressFactory(number_end="")
     expected = (
-        f"{address.street} {address.number}{address.letter}" f", {address.municipality}"
+        f"{address.street} {address.number}{address.letter}, {address.municipality}"
     )
     assert str(address) == expected
 

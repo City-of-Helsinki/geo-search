@@ -124,8 +124,7 @@ _municipality_parameters = [
         name="municipality",
         location=OpenApiParameter.QUERY,
         description=(
-            "Municipality name in Finnish or Swedish. "
-            'E.g. "Helsinki" or "Helsingfors".'
+            'Municipality name in Finnish or Swedish. E.g. "Helsinki" or "Helsingfors".'
         ),
         required=False,
         type=str,
