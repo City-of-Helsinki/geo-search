@@ -16,10 +16,11 @@ Each shapefile is processed and addresses (including streets and municipalities)
 are created from the features.
 """
 
-from django.contrib.gis.gdal import DataSource
-from django.core.management.base import BaseCommand
 from pathlib import Path
 from time import time
+
+from django.contrib.gis.gdal import DataSource
+from django.core.management.base import BaseCommand
 
 from ...services.address_import import AddressImporter
 

@@ -1,9 +1,10 @@
+from typing import Any, Dict
+from unittest.mock import MagicMock, Mock
+
 from django.conf import settings
 from django.contrib.gis.gdal.feature import Feature
 from django.contrib.gis.geos import LineString
 from pytest import approx, mark
-from typing import Any, Dict
-from unittest.mock import MagicMock, Mock
 
 from ..models import Address, Municipality, Street
 from ..services.address_import import AddressImporter

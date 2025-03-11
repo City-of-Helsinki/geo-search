@@ -3,10 +3,11 @@ This management command imports municipalities from MML data:
 https://www.maanmittauslaitos.fi/kartat-ja-paikkatieto/ammattilaiskayttajille/tuotekuvaukset/hallinnolliset-aluejaot-vektori
 """
 
-from django.contrib.gis.gdal import DataSource
-from django.core.management.base import BaseCommand
 from pathlib import Path
 from time import time
+
+from django.contrib.gis.gdal import DataSource
+from django.core.management.base import BaseCommand
 
 from ...services.municipality_import import MunicipalityImporter
 

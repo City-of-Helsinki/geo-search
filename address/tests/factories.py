@@ -1,4 +1,4 @@
-from factory import Faker, LazyAttribute, post_generation, SubFactory
+from factory import Faker, LazyAttribute, SubFactory, post_generation
 from factory.django import DjangoModelFactory
 
 from ..models import Address, Municipality, PostalCodeArea, Street

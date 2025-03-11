@@ -1,5 +1,6 @@
-from rest_framework.pagination import PageNumberPagination
 from urllib.parse import unquote
+
+from rest_framework.pagination import PageNumberPagination
 
 
 class Pagination(PageNumberPagination):
