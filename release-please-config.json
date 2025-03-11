@@ -20,5 +20,6 @@
         {"type": "ci", "section": "Continuous Integration", "hidden": true}
       ]
     }
-  }
+  },
+  "plugins": ["sentence-case"]
 }
