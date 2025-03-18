@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.0.0...geo-search-v1.0.1) (2025-03-18)
+
+
+### Bug Fixes
+
+* Use gettext_lazy ([b84dbd7](https://github.com/City-of-Helsinki/geo-search/commit/b84dbd7420b431e6da4fe3b7de7575200fa34ae4))
+
+
+### Documentation
+
+* Update readme ([5911b50](https://github.com/City-of-Helsinki/geo-search/commit/5911b500a4811c0afc5595cebf2c6766f2c223e0))
+
 ## [Unreleased]
 
 ## [1.1.1] - 2024-09-24
