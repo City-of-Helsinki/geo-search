@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.0.1...geo-search-v1.1.0) (2025-10-03)
+
+
+### Features
+
+* Add CORS-configuration ([4c7c47d](https://github.com/City-of-Helsinki/geo-search/commit/4c7c47d8c567eadd8bd2066d24a88f9e1f0e8c94))
+
 ## [1.0.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.0.0...geo-search-v1.0.1) (2025-03-18)
 
 
