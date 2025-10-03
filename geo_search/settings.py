@@ -30,6 +30,7 @@ env = Env(
         str,
         "postgis://geo-search:geo-search@localhost:5432/geo-search",
     ),
+    DATABASE_PASSWORD=(str, ""),
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, ""),
     REQUIRE_AUTHORIZATION=(bool, True),
@@ -115,6 +116,9 @@ WSGI_APPLICATION = "geo_search.wsgi.application"
 
 # Databases
 DATABASES = {"default": env.db()}
+
+if env("DATABASE_PASSWORD"):
+    DATABASES["default"]["PASSWORD"] = env("DATABASE_PASSWORD")
 
 # Internationalization
 LANGUAGE_CODE = "fi"
