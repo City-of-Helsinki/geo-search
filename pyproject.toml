@@ -25,12 +25,12 @@ select = [
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "geo_search.settings"
-python_files = ["tests.py", "test_*.py", "*_tests.py"]
 filterwarnings = [
-    # Ignore whitenoise warning about static directory not existing during tests
-    "ignore:No directory at:UserWarning:whitenoise.base",
     # Ignore cache key warnings during testing
     "ignore:Cache key contains characters that will cause errors if used with memcached:RuntimeWarning:django",
-    # Ignore deprecation warning from gisserver until it has been fixed upstream
-    "ignore:The django.utils.timezone.utc alias is deprecated",
 ]
+
+[tool.pip-tools.compile]
+generate-hashes = true
+strip-extras = true
+allow-unsafe = true

@@ -1,32 +1,55 @@
-FROM public.ecr.aws/ubuntu/ubuntu:22.04
+# ==============================
+FROM helsinki.azurecr.io/ubi9/python-312-gdal AS appbase
+# ==============================
 
 # Fixes git vulnerability issue in openshift
 COPY .gitconfig .
 # Fixes git vulnerability issue locally
 COPY .gitconfig /etc/gitconfig
 
-WORKDIR /app
+ENV STATIC_ROOT=/srv/app/static
+ENV TZ="Europe/Helsinki"
+# Default for URL prefix, handled by uwsgi, ignored by devserver
+# Works like this: "/example" -> http://hostname.domain.name/example
+ENV DJANGO_URL_PREFIX=/
 
-RUN apt-get update && \
-    TZ="Europe/Helsinki" DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https python3-pip gdal-bin uwsgi uwsgi-plugin-python3 postgresql-client netcat gettext git-core libpq-dev unzip tzdata && \
-    ln -s /usr/bin/pip3 /usr/local/bin/pip && \
-    ln -s /usr/bin/python3 /usr/local/bin/python \
-    && apt-get clean
+WORKDIR /app
+USER root
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN dnf update -y && dnf install -y \
+    nmap-ncat \
+    postgresql \
+    && pip install -U pip setuptools wheel \
+    && pip install --no-cache-dir -r requirements.txt \
+    && uwsgi --build-plugin https://github.com/City-of-Helsinki/uwsgi-sentry \
+    && mkdir -p /srv/app/static \
+    && dnf clean all
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
+EXPOSE 8080/tcp
+
+# ==============================
+FROM appbase AS development
+# ==============================
+
+ENV DEV_SERVER=1
+
+COPY requirements-dev.txt .
+RUN pip install --no-cache-dir -r requirements-dev.txt
 
 COPY . .
 
-ENV STATIC_ROOT /srv/app/static
-RUN mkdir -p /srv/app/static
+USER default
 
-RUN SECRET_KEY="only-used-for-collectstatic" python manage.py collectstatic --noinput
-RUN python manage.py compilemessages
+# ==============================
+FROM appbase AS production
+# ==============================
+COPY . .
 
-# Openshift starts the container process with group zero and random ID
-# we mimic that here with nobody and group zero
-USER nobody:0
+RUN DJANGO_SECRET_KEY="only-used-for-collectstatic" DATABASE_URL="sqlite:///" \
+    python manage.py collectstatic --noinput && \
+    python manage.py compilemessages
 
-ENTRYPOINT ["./docker-entrypoint.sh"]
+USER default
