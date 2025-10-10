@@ -3,4 +3,4 @@ pip-tools
 pytest
 pytest-cov
 pytest-django
-ruff==0.9.10 # sync with .pre-commit-config.yaml
+factory-boy
