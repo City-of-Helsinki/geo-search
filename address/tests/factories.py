@@ -14,10 +14,12 @@ class MunicipalityFactory(DjangoModelFactory):
         name = self.name
         self.set_current_language("sv")
         self.name = name
+        self.save()
 
     class Meta:
         model = Municipality
         django_get_or_create = ("id",)
+        skip_postgeneration_save = True
 
 
 class StreetFactory(DjangoModelFactory):
@@ -29,9 +31,11 @@ class StreetFactory(DjangoModelFactory):
         name = self.name
         self.set_current_language("sv")
         self.name = name
+        self.save()
 
     class Meta:
         model = Street
+        skip_postgeneration_save = True
 
 
 class PostalCodeAreaFactory(DjangoModelFactory):
@@ -44,9 +48,11 @@ class PostalCodeAreaFactory(DjangoModelFactory):
         name = self.name
         self.set_current_language("sv")
         self.name = name
+        self.save()
 
     class Meta:
         model = PostalCodeArea
+        skip_postgeneration_save = True
 
 
 class AddressFactory(DjangoModelFactory):
