@@ -1,4 +1,4 @@
-Django
+django
 django-cors-headers
 django-gisserver
 django-environ
@@ -8,7 +8,8 @@ djangorestframework
 djangorestframework-api-key
 djangorestframework-xml
 drf-spectacular
-factory-boy
-psycopg2
-sentry-sdk
+psycopg[c]
+sentry-sdk[django]
 whitenoise
+uwsgi
+uwsgitop
