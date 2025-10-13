@@ -1,5 +1,5 @@
 import logging
-from typing import Iterable
+from collections.abc import Iterable
 
 from django.conf import settings
 from django.contrib.gis.gdal.feature import Feature
@@ -50,9 +50,7 @@ class MunicipalityImporter:
 
             num_addresses_updated = addresses.update(municipality=municipality)
 
-            logger.info(
-                "%s, %s, %s, %s" % (code, name_fi, name_sv, num_addresses_updated)
-            )
+            logger.info(f"{code}, {name_fi}, {name_sv}, {num_addresses_updated}")
             total_addresses_updated += num_addresses_updated
 
         return total_addresses_updated

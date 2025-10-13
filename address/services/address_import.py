@@ -1,7 +1,7 @@
 from bisect import bisect_left
+from collections.abc import Iterable
 from functools import lru_cache
 from math import sqrt
-from typing import Dict, Iterable, List, Tuple
 
 from django.conf import settings
 from django.contrib.gis.gdal.feature import Feature
@@ -55,7 +55,7 @@ class AddressImporter:
         Address.objects.bulk_create(addresses)
         return num_addresses
 
-    def _transform_address_locations(self, addresses: List[Address]) -> None:
+    def _transform_address_locations(self, addresses: list[Address]) -> None:
         """
         Transforms the locations of each given address to the projection given in
         settings.The points are transformed in bulk through a MultiPoint because
@@ -70,7 +70,7 @@ class AddressImporter:
         for i, address in enumerate(addresses):
             address.location = transformed_points[i]
 
-    def _build_addresses_from_feature(self, feature: Feature) -> List[Address]:
+    def _build_addresses_from_feature(self, feature: Feature) -> list[Address]:
         """Construct addresses from the given feature."""
         if not self._has_required_fields(feature):
             return []
@@ -103,9 +103,9 @@ class AddressImporter:
         street: Street,
         municipality: Municipality,
         feature: Feature,
-        normals: Dict[float, Tuple[float, float]],
+        normals: dict[float, tuple[float, float]],
         right_side: bool,
-    ) -> List[Address]:
+    ) -> list[Address]:
         """Constructs addresses for one side (right or left) of a street."""
         numbers = self._find_numbers(feature, right_side)
         if not numbers:
@@ -175,7 +175,7 @@ class AddressImporter:
 
     def _compute_normals(
         self, line_string: LineString
-    ) -> Dict[float, Tuple[float, float]]:
+    ) -> dict[float, tuple[float, float]]:
         """
         Compute a lookup table for the normals for each line segment in the line string.
         This is done so that given an interpolated distance (between 0 and 1) on the
@@ -201,7 +201,7 @@ class AddressImporter:
 
     def _find_normal(
         self, distance: float, normals: dict, opposite: bool = False
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Given an distance between 0 and 1 on the line string, find the normal
         (or its opposite) from the provided dictionary.

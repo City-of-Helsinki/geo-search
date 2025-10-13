@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import MagicMock, Mock
 
 from django.conf import settings
@@ -62,7 +62,7 @@ def test_import_postal_codes_does_not_update_postal_code_if_outside(paavo_shapef
     assert not address.postal_code_area
 
 
-def _mock_feature(fields: Dict[str, Any]) -> Feature:
+def _mock_feature(fields: dict[str, Any]) -> Feature:
     """Create a mock Feature with the test fields and geometry."""
     items = {}
     for key, value in fields.items():
