@@ -1,5 +1,5 @@
 import logging
-from typing import Iterable
+from collections.abc import Iterable
 
 from django.conf import settings
 from django.contrib.gis.gdal.feature import Feature

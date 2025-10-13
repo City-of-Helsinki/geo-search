@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import MagicMock, Mock
 
 from django.conf import settings
@@ -103,7 +103,7 @@ def test_import_addresses_creates_addresses():
         assert address.location.srid == settings.PROJECTION_SRID
 
 
-def _mock_feature(fields: Dict[str, Any]) -> Feature:
+def _mock_feature(fields: dict[str, Any]) -> Feature:
     """Create a mock Feature with the test fields and geometry."""
     items = {}
     for key, value in fields.items():
