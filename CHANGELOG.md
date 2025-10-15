@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.0.1...geo-search-v1.1.0) (2025-10-15)
+
+
+### Features
+
+* Add CORS-configuration ([4c7c47d](https://github.com/City-of-Helsinki/geo-search/commit/4c7c47d8c567eadd8bd2066d24a88f9e1f0e8c94))
+
+
+### Bug Fixes
+
+* Update factory postgeneration hooks ([4333758](https://github.com/City-of-Helsinki/geo-search/commit/43337588694d840016c56aaa7d1775aa0fc812ca))
+
+
+### Dependencies
+
+* Bump django 5.2 and requirements ([b18b7cc](https://github.com/City-of-Helsinki/geo-search/commit/b18b7cc43ee2a6b2b3889ca20f3964e2fcc53b6f))
+* Update pre-commit config versions ([b88ea51](https://github.com/City-of-Helsinki/geo-search/commit/b88ea51c39f0af12da9afd4ef5268f333478cb81))
+
 ## [1.0.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.0.0...geo-search-v1.0.1) (2025-03-18)
 
 
