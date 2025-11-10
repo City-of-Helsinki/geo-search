@@ -1,12 +1,13 @@
 import os
-import subprocess
 from pathlib import Path
 
 import sentry_sdk
+from corsheaders.defaults import default_headers
 from django.utils.log import DEFAULT_LOGGING
 from django.utils.translation import gettext_lazy as _
 from environ import Env
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.types import SamplingContext
 
 GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
 GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
@@ -32,7 +33,11 @@ env = Env(
     ),
     DATABASE_PASSWORD=(str, ""),
     SENTRY_DSN=(str, ""),
-    SENTRY_ENVIRONMENT=(str, ""),
+    SENTRY_ENVIRONMENT=(str, "local"),
+    SENTRY_PROFILE_SESSION_SAMPLE_RATE=(float, None),
+    SENTRY_RELEASE=(str, None),
+    SENTRY_TRACES_SAMPLE_RATE=(float, None),
+    SENTRY_TRACES_IGNORE_PATHS=(list, ["/healthz", "/readiness"]),
     REQUIRE_AUTHORIZATION=(bool, True),
     DJANGO_LOG_LEVEL=(str, "INFO"),
 )
@@ -47,21 +52,34 @@ if DEBUG and not SECRET_KEY:
     SECRET_KEY = "secret-for-debugging-only"
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
-try:
-    version = str(
-        subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip()
-    )
-except OSError:
-    version = "n/a"
+SENTRY_TRACES_SAMPLE_RATE = env("SENTRY_TRACES_SAMPLE_RATE")
+SENTRY_TRACES_IGNORE_PATHS = env.list("SENTRY_TRACES_IGNORE_PATHS")
 
-sentry_sdk.init(
-    dsn=env.str("SENTRY_DSN"),
-    release=version,
-    environment=env("SENTRY_ENVIRONMENT"),
-    traces_sample_rate=1.0,
-    send_default_pii=True,
-    integrations=[DjangoIntegration()],
-)
+
+def sentry_traces_sampler(sampling_context: SamplingContext) -> float:
+    # Respect parent sampling decision if one exists. Recommended by Sentry.
+    if (parent_sampled := sampling_context.get("parent_sampled")) is not None:
+        return float(parent_sampled)
+
+    # Exclude health check endpoints from tracing
+    path = sampling_context.get("wsgi_environ", {}).get("PATH_INFO", "")
+    if path.rstrip("/") in SENTRY_TRACES_IGNORE_PATHS:
+        return 0
+
+    # Use configured sample rate for all other requests
+    return SENTRY_TRACES_SAMPLE_RATE or 0
+
+
+if env("SENTRY_DSN"):
+    sentry_sdk.init(
+        dsn=env("SENTRY_DSN"),
+        environment=env("SENTRY_ENVIRONMENT"),
+        release=env("SENTRY_RELEASE"),
+        integrations=[DjangoIntegration()],
+        traces_sampler=sentry_traces_sampler,
+        profile_session_sample_rate=env("SENTRY_PROFILE_SESSION_SAMPLE_RATE"),
+        profile_lifecycle="trace",
+    )
 
 # Application definition
 INSTALLED_APPS = [
@@ -197,3 +215,9 @@ API_KEY_CUSTOM_HEADER = "HTTP_API_KEY"
 USE_X_FORWARDED_HOST = True
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "baggage",
+    "sentry-trace",
+)
