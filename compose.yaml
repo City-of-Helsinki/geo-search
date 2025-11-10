@@ -1,7 +1,8 @@
 services:
+
   postgis:
     image: postgis/postgis:17-3.5
-    platform: linux/x86_64
+    platform: linux/amd64
     restart: on-failure
     environment:
       POSTGRES_USER: geo-search
@@ -12,22 +13,19 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     container_name: geo-search-db
+
   django:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./Dockerfile
       target: development
     env_file:
       - .env
-    environment:
-      DEV_SERVER: 1
-      DATABASE_URL: postgis://geo-search:geo-search@geo-search-db/geo-search
-      DATABASE_HOST: geo-search-db.helsinki
     volumes:
       - .:/app
     ports:
       - "8080:8080"
-    restart: unless-stopped
     depends_on:
       - postgis
     container_name: geo-search-django
