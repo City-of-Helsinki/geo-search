@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.1.1...geo-search-v1.2.0) (2025-11-14)
+
+
+### Features
+
+* **sentry:** Update sentry configuration ([29952bb](https://github.com/City-of-Helsinki/geo-search/commit/29952bbb30498d9475690c1364372d253430e933))
+
+
+### Dependencies
+
+* Bump packages ([9d9a3ea](https://github.com/City-of-Helsinki/geo-search/commit/9d9a3ea603d00bdf9e0b1d069699716feed13754))
+
 ## [1.1.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.1.0...geo-search-v1.1.1) (2025-11-10)
 
 
