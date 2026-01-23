@@ -151,14 +151,10 @@ _municipality_parameters = [
     )
 )
 class AddressViewSet(ReadOnlyModelViewSet):
-    queryset = (
-        Address.objects.order_by("pk")
-        # .select_related("street", "postal_code_area", "municipality")
-        .prefetch_related(
-            "street__translations",
-            "postal_code_area__translations",
-            "municipality__translations",
-        )
+    queryset = Address.objects.order_by("pk").prefetch_related(
+        "street__translations",
+        "postal_code_area__translations",
+        "municipality__translations",
     )
 
     serializer_class = AddressSerializer
