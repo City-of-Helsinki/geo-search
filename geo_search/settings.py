@@ -23,6 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = Env(
     DEBUG=(bool, False),
+    DEBUG_TOOLBAR=(bool, False),
     SECRET_KEY=(str, "temp_key"),
     ALLOWED_HOSTS=(list, []),
     STATIC_ROOT=(str, str(BASE_DIR / "static")),
@@ -47,6 +48,8 @@ if env_path.exists():
     Env.read_env(env_path)
 
 DEBUG = env.bool("DEBUG")
+DEBUG_TOOLBAR = env.bool("DEBUG_TOOLBAR")
+
 SECRET_KEY = env.str("SECRET_KEY")
 if DEBUG and not SECRET_KEY:
     SECRET_KEY = "secret-for-debugging-only"
@@ -111,6 +114,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
+
+if DEBUG and DEBUG_TOOLBAR:
+    INSTALLED_APPS.append("debug_toolbar")
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+    INTERNAL_IPS = ["127.0.0.1"]
 
 TEMPLATES = [
     {
