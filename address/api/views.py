@@ -8,6 +8,8 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema
 from rest_framework.exceptions import ParseError
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from address.models import Street
+
 from ..models import Address, Municipality, PostalCodeArea
 from .serializers import (
     AddressSerializer,
@@ -169,9 +171,12 @@ class AddressViewSet(ReadOnlyModelViewSet):
         street_name = self.request.query_params.get("streetname")
         if street_name is None:
             return addresses
-        return addresses.filter(
-            street__translations__name__iexact=street_name
-        ).distinct()
+        street_ids = list(
+            Street.objects.filter(translations__name__iexact=street_name).values_list(
+                "id", flat=True
+            )
+        )
+        return addresses.filter(street_id__in=street_ids)
 
     def _filter_by_street_number(self, addresses: QuerySet) -> QuerySet:
         street_number = self.request.query_params.get("streetnumber")
@@ -191,15 +196,23 @@ class AddressViewSet(ReadOnlyModelViewSet):
         municipality = self.request.query_params.get("municipality")
         if municipality is None:
             return addresses
-        return addresses.filter(
-            municipality__translations__name__iexact=municipality
-        ).distinct()
+        municipality_ids = list(
+            Municipality.objects.filter(
+                translations__name__iexact=municipality
+            ).values_list("id", flat=True)
+        )
+        return addresses.filter(municipality_id__in=municipality_ids)
 
     def _filter_by_municipality_code(self, addresses: QuerySet) -> QuerySet:
         municipality_code = self.request.query_params.get("municipalitycode")
         if municipality_code is None:
             return addresses
-        return addresses.filter(municipality__code__iexact=municipality_code).distinct()
+        municipality_ids = list(
+            Municipality.objects.filter(code=municipality_code).values_list(
+                "id", flat=True
+            )
+        )
+        return addresses.filter(municipality_id__in=municipality_ids)
 
     def _filter_by_postal_code(self, addresses: QuerySet) -> QuerySet:
         postal_code = self.request.query_params.get("postalcode")
