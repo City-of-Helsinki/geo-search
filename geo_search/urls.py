@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import include, path
@@ -45,3 +46,8 @@ def readiness(*args, **kwargs) -> HttpResponse:
 
 
 urlpatterns += [path("healthz", healthz), path("readiness", readiness)]
+
+if settings.DEBUG and settings.DEBUG_TOOLBAR:
+    from debug_toolbar.toolbar import debug_toolbar_urls
+
+    urlpatterns += debug_toolbar_urls()
