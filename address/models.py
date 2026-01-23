@@ -79,3 +79,20 @@ class Address(models.Model):
 
     class Meta:
         verbose_name_plural = _("Addresses")
+        indexes = [
+            # This index speeds up address?municipality and address?municipalitycode
+            # by 10x
+            models.Index(
+                name="idx_address_municipality_id",
+                fields=["municipality", "id"],
+                include=[
+                    "street",
+                    "number",
+                    "number_end",
+                    "letter",
+                    "postal_code_area",
+                    "location",
+                    "modified_at",
+                ],
+            )
+        ]
