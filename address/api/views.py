@@ -151,7 +151,7 @@ _municipality_parameters = [
     )
 )
 class AddressViewSet(ReadOnlyModelViewSet):
-    queryset = Address.objects.filter(pk__gte=0).order_by("pk")
+    queryset = Address.objects.order_by("pk")
     serializer_class = AddressSerializer
 
     def get_queryset(self) -> QuerySet:
@@ -277,7 +277,7 @@ class AddressViewSet(ReadOnlyModelViewSet):
     retrieve=extend_schema(parameters=_area_parameters),
 )
 class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
-    queryset = PostalCodeArea.objects.filter(pk__gte=0).order_by("pk")
+    queryset = PostalCodeArea.objects.order_by("pk")
     serializer_class = PostalCodeAreaSerializer
 
     def get_queryset(self) -> QuerySet:
@@ -320,5 +320,5 @@ class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
     retrieve=extend_schema(parameters=_area_parameters),
 )
 class MunicipalityViewSet(ReadOnlyModelViewSet):
-    queryset = Municipality.objects.filter(pk__gte=0).order_by("pk")
+    queryset = Municipality.objects.order_by("pk")
     serializer_class = MunicipalitySerializer
