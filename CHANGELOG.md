@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.3.1...geo-search-v1.4.0) (2026-01-28)
+
+
+### Features
+
+* Support enabling django debug toolbar with DEBUG_TOOLBAR env var ([4a3c64e](https://github.com/City-of-Helsinki/geo-search/commit/4a3c64ede3c5d03837450c02272c176703ea54f7))
+
+
+### Performance Improvements
+
+* Add index for address-municipality ([4fb5f8c](https://github.com/City-of-Helsinki/geo-search/commit/4fb5f8c429a494d1038ebe8f4bc3de7d94b37d4a))
+* Add select_related and prefetch_related ([025ea0c](https://github.com/City-of-Helsinki/geo-search/commit/025ea0c5cddb7b93ac883bb2f2affd9f6cb396c0))
+* Remove pk__gte=0 filters ([c2ef552](https://github.com/City-of-Helsinki/geo-search/commit/c2ef552fa38a251ead579360594b482701f95329))
+* Replace use of slow DISTINCT ([f66dfbf](https://github.com/City-of-Helsinki/geo-search/commit/f66dfbf485e54f94b23bc78fceb66c3f6a84cf02))
+
+
+### Dependencies
+
+* Bump urllib3 from 2.5.0 to 2.6.0 ([6a72036](https://github.com/City-of-Helsinki/geo-search/commit/6a72036de6b7773d39700b1aff721027cd7c8088))
+* Bump urllib3 from 2.6.0 to 2.6.3 ([#91](https://github.com/City-of-Helsinki/geo-search/issues/91)) ([7d70d22](https://github.com/City-of-Helsinki/geo-search/commit/7d70d221c8c2f56e512a1fb4d5871e609afa5dde))
+* Bump wheel from 0.45.1 to 0.46.2 ([b77f3e9](https://github.com/City-of-Helsinki/geo-search/commit/b77f3e9f36b6112144c1d2f76aa247a00485bdb3))
+
 ## [1.3.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.3.0...geo-search-v1.3.1) (2025-12-04)
 
 
