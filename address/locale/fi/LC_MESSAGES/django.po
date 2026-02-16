@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-13 20:28+0300\n"
+"POT-Creation-Date: 2026-02-16 11:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,53 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Id"
+msgstr "Tunniste"
+
+msgid "Municipality code"
+msgstr "Kuntakoodi"
+
 msgid "Name"
 msgstr "Nimi"
 
-msgid "municipalities"
-msgstr "kunnat"
+msgid "Area"
+msgstr "Alue"
 
-msgid "addresses"
-msgstr "osoitteet"
+msgid "Municipality"
+msgstr "Kunta"
+
+msgid "Municipalities"
+msgstr "Kunnat"
+
+msgid "Street"
+msgstr "Katu"
+
+msgid "Streets"
+msgstr "Kadut"
+
+msgid "Postal code"
+msgstr "Postinumero"
+
+msgid "Postal code area"
+msgstr "Postinumeroalue"
+
+msgid "Postal code areas"
+msgstr "Postinumeroalueet"
+
+msgid "Number"
+msgstr "Numero"
+
+msgid "Number end"
+msgstr "Numeron loppu"
+
+msgid "Letter"
+msgstr "Kirjain"
+
+msgid "Location"
+msgstr "Sijainti"
+
+msgid "Address"
+msgstr "Osoite"
+
+msgid "Addresses"
+msgstr "Osoitteet"
