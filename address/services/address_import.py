@@ -9,6 +9,7 @@ from django.contrib.gis.geos import LineString, MultiPoint, Point
 
 from address.constants import MUNICIPALITIES
 from address.models import Address, Municipality, Street
+from address.services.import_utils import create_municipality, value_or_empty
 
 # Offset (in meters) from the middle of the street to the address at perpendicular to
 # the street. Setting this to zero makes the address locations lie exactly on the street
@@ -76,11 +77,23 @@ class AddressImporter:
             return []
 
         # Create the municipality and street if they don't exist yet
-        municipality = self._create_municipality(feature["KUNTAKOODI"].value)
+        municipality_code = int(value_or_empty(feature, "KUNTAKOODI"))
+        municipality_fi, municipality_sv = MUNICIPALITIES[self.province][
+            municipality_code
+        ]
+        municipality = create_municipality(
+            municipality_code, municipality_fi, municipality_sv, municipality_fi
+        )
+
+        street_name_fi = value_or_empty(feature, "TIENIMI_SU")
+        street_name_sv = value_or_empty(feature, "TIENIMI_RU") or street_name_fi
+        if not street_name_fi:
+            street_name_fi = street_name_sv
 
         street = self._create_street(
-            feature["TIENIMI_SU"].value or "",
-            feature["TIENIMI_RU"].value or "",
+            street_name_fi,
+            street_name_sv,
+            street_name_fi,
             municipality,
         )
 
@@ -217,29 +230,15 @@ class AddressImporter:
         return x, y
 
     @lru_cache(maxsize=None)  # noqa: B019
-    def _create_municipality(self, municipality_id: int) -> Municipality:
-        """Create a new municipality if it does not exist already, and return it."""
-        municipality_fi, municipality_sv = MUNICIPALITIES[self.province][
-            municipality_id
-        ]
-        municipality, _ = Municipality.objects.get_or_create(id=municipality_fi.lower())
-        municipality.set_current_language("sv")
-        municipality.name = municipality_sv
-        municipality.set_current_language("fi")
-        municipality.name = municipality_fi
-        municipality.code = municipality_id
-
-        municipality.save()
-        return municipality
-
-    @lru_cache(maxsize=None)  # noqa: B019
     def _create_street(
-        self, name_fi: str, name_sv: str, municipality: Municipality
+        self, name_fi: str, name_sv: str, name_en: str, municipality: Municipality
     ) -> Street:
         """Create a new street if it does not exist already, and return it."""
         street, _ = Street.objects.translated(name=name_fi).get_or_create(
             municipality=municipality
         )
+        street.set_current_language("en")
+        street.name = name_en
         street.set_current_language("sv")
         street.name = name_sv
         street.set_current_language("fi")
@@ -248,9 +247,13 @@ class AddressImporter:
         return street
 
     def _has_required_fields(self, feature: Feature) -> bool:
-        """Check whether the feature contains street name and first/last numbers."""
+        """Check whether the feature contains street name, first/last numbers
+        and municipality code.
+        """
         street_keys = ["TIENIMI_SU", "TIENIMI_RU"]
         number_keys = ["ENS_TALO_O", "ENS_TALO_V", "VIIM_TAL_O", "VIIM_TAL_V"]
+        municipality_key = "KUNTAKOODI"
         has_street = any(feature[key].value for key in street_keys)
         has_number = any(feature[key].value for key in number_keys)
-        return has_street and has_number
+        has_municipality = feature[municipality_key].value
+        return has_street and has_number and has_municipality

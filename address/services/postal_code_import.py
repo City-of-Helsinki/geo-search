@@ -8,6 +8,7 @@ from django.contrib.gis.geos import MultiPolygon
 from address.constants import MUNICIPALITIES
 
 from ..models import Address, Municipality, PostalCodeArea
+from .import_utils import value_or_empty
 
 logger = logging.getLogger(__name__)
 
@@ -43,16 +44,21 @@ class PostalCodeImporter:
         # Update postal code for all addresses within each postal code area
         for feature in features:
             geometry = feature.geom.geos
-            postal_code = (
-                feature["posti_alue"].value.strip() if feature["posti_alue"] else None
-            )
-            post_office_fi = feature["nimi"].value.strip() if feature["nimi"] else None
-            post_office_sv = feature["namn"].value.strip() if feature["namn"] else None
-            municipality_id = feature["kuntanro"].value
+            postal_code = value_or_empty(feature, "posti_alue")
+            if not postal_code:
+                logger.warning("Postal code area with no postal code, skipping")
+                continue
+            post_office_fi = value_or_empty(feature, "nimi")
+            post_office_sv = value_or_empty(feature, "namn") or post_office_fi
+            if not post_office_fi:
+                post_office_fi = post_office_sv
+            municipality_id = int(value_or_empty(feature, "kuntanro"))
 
             postal_code_area, _ = PostalCodeArea.objects.get_or_create(
                 postal_code=postal_code
             )
+            postal_code_area.set_current_language("en")
+            postal_code_area.name = post_office_fi
             postal_code_area.set_current_language("sv")
             postal_code_area.name = post_office_sv
             postal_code_area.set_current_language("fi")
