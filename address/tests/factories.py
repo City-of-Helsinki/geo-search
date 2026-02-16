@@ -14,6 +14,8 @@ class MunicipalityFactory(DjangoModelFactory):
         name = self.name
         self.set_current_language("sv")
         self.name = name
+        self.set_current_language("en")
+        self.name = name
         self.save()
 
     class Meta:
@@ -31,6 +33,8 @@ class StreetFactory(DjangoModelFactory):
         name = self.name
         self.set_current_language("sv")
         self.name = name
+        self.set_current_language("en")
+        self.name = name
         self.save()
 
     class Meta:
@@ -47,6 +51,8 @@ class PostalCodeAreaFactory(DjangoModelFactory):
     def post(self, *_, **__):
         name = self.name
         self.set_current_language("sv")
+        self.name = name
+        self.set_current_language("en")
         self.name = name
         self.save()
 
