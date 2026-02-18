@@ -1,6 +1,10 @@
 """
-This management command imports municipalities from MML data:
-https://www.maanmittauslaitos.fi/kartat-ja-paikkatieto/ammattilaiskayttajille/tuotekuvaukset/hallinnolliset-aluejaot-vektori
+This management command imports municipalities from NLS data:
+https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/datasets-and-interfaces/product-descriptions/division-administrative-areas-vector
+
+Data requires manual downloading and unzipping. The shapefiles can be given to
+the management command as arguments:
+    python manage.py import_municipalities <somepath>/SuomenKuntajako_<year>_10k.shp
 """
 
 from pathlib import Path
@@ -13,7 +17,7 @@ from ...services.municipality_import import MunicipalityImporter
 
 
 class Command(BaseCommand):
-    help = "Import municipalities from the given MML shapefiles."
+    help = "Import municipalities from the given NLS shapefiles."
 
     def add_arguments(self, parser) -> None:
         parser.add_argument("files", nargs="+", type=Path)
