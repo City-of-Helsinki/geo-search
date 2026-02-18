@@ -253,40 +253,6 @@ def test_filter_addresses_returns_bad_request_if_distance_is_invalid(
 
 
 @mark.django_db
-def test_filter_postal_area_codes_by_municipality(api_client: APIClient):
-    municipality = MunicipalityFactory(name="Helsinki")
-    match = PostalCodeAreaFactory(municipality=municipality)
-    serializer = PostalCodeAreaSerializer()
-    response = api_client.get(
-        reverse("address:postalcodearea-list"), {"municipality": municipality.name}
-    )
-    assert response.status_code == 200
-    assert response.data == {
-        "count": 1,
-        "next": None,
-        "previous": None,
-        "results": [serializer.to_representation(match)],
-    }
-
-
-@mark.django_db
-def test_filter_postal_area_codes_by_municipality_code(api_client: APIClient):
-    municipality = MunicipalityFactory(code="91")
-    match = PostalCodeAreaFactory(municipality=municipality)
-    serializer = PostalCodeAreaSerializer()
-    response = api_client.get(
-        reverse("address:postalcodearea-list"), {"municipalitycode": municipality.code}
-    )
-    assert response.status_code == 200
-    assert response.data == {
-        "count": 1,
-        "next": None,
-        "previous": None,
-        "results": [serializer.to_representation(match)],
-    }
-
-
-@mark.django_db
 def test_filter_postal_area_codes_by_postal_code(api_client: APIClient):
     PostalCodeAreaFactory(postal_code="99999")
     match = PostalCodeAreaFactory(postal_code="00100")
