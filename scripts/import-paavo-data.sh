@@ -24,7 +24,7 @@ fi
 echo "Importing Paavo data for province $1.";
 
 # URL to Paavo WFS service
-DATA_URL="https://geo.stat.fi/geoserver/wfs?SERVICE=wfs&version=1.0.0&request=GetFeature&srsName=EPSG:3067&outputFormat=SHAPE-ZIP&typeNames=pno_meri_2024&bbox=${bbox}"
+DATA_URL="https://geo.stat.fi/geoserver/wfs?SERVICE=wfs&version=2.0.0&request=GetFeature&srsName=EPSG:3067&outputFormat=SHAPE-ZIP&typeNames=pno_meri_2026&bbox=${bbox}"
 
 DATA_DIR=/tmp/paavo
 
@@ -33,7 +33,7 @@ EXTRACTED_DIR=$DATA_DIR/extracted
 
 # Download the source data
 mkdir -p $DATA_DIR
-curl "$DATA_URL" -o $DATA_DIR/data.zip
+curl --proto "=https" --tlsv1.2 -sSf "$DATA_URL" -o $DATA_DIR/data.zip
 
 # Extract the files from the archive
 rm -rf $EXTRACTED_DIR
@@ -41,4 +41,4 @@ unzip $DATA_DIR/data.zip -d $EXTRACTED_DIR
 
 # Run the management command with all the shapefiles as arguments
 SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd)"
-python "$SCRIPT_DIR/../manage.py" import_postal_codes "$1" "$(find $EXTRACTED_DIR -type f -name "*.shp")"
+python "$SCRIPT_DIR/../manage.py" import_postal_code_areas "$1" "$(find $EXTRACTED_DIR -type f -name "*.shp")"

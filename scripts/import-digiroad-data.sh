@@ -23,7 +23,7 @@ fi
 
 echo "Importing Digiroad data for province $1.";
 
-DATA_URL="https://ava.vaylapilvi.fi/ava/Tie/Digiroad/Aineistojulkaisut/latest/Maakuntajako_digiroad_R/${package_name}"
+DATA_URL="https://aineistot.vayla.fi/spa/ava/Tie/Digiroad/Aineistojulkaisut/latest/Maakuntajako_digiroad_R/${package_name}"
 # Directory where the data will be downloaded and extracted
 DATA_DIR=/tmp/digiroad
 
@@ -40,7 +40,7 @@ CONVERTED_DIR=$DATA_DIR/converted
 
 # Download the source data
 mkdir -p $DATA_DIR
-curl -o $DATA_DIR/data.zip $DATA_URL
+curl --proto "=https" --tlsv1.2 -sSf -L -o $DATA_DIR/data.zip $DATA_URL
 
 # Extract the shapefiles from the archive
 rm -rf $EXTRACTED_DIR
@@ -61,4 +61,5 @@ done
 
 # Run the management command with all the shapefiles as arguments
 SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd)"
-python "$SCRIPT_DIR/../manage.py" import_addresses "$(find $CONVERTED_DIR -type f -name "DR_LINKK*.shp")" "$1"
+# shellcheck disable=SC2046
+python "$SCRIPT_DIR/../manage.py" import_addresses $(find $CONVERTED_DIR -type f -name "DR_LINKK*.shp") "$1"

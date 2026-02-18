@@ -1,5 +1,8 @@
 """
-This management command imports addresses from Paavo data:
+This management command imports addresses from Paavo data
+(Statistics Finland's open data on postal code areas).
+
+The data can be downloaded from:
 https://www.stat.fi/org/avoindata/paikkatietoaineistot/paavo.html
 """
 
