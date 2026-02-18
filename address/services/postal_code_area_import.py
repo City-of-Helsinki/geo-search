@@ -5,43 +5,29 @@ from django.conf import settings
 from django.contrib.gis.gdal.feature import Feature
 from django.contrib.gis.geos import MultiPolygon
 
-from address.constants import MUNICIPALITIES
-
 from ..models import Address, Municipality, PostalCodeArea
 from .import_utils import value_or_empty
 
 logger = logging.getLogger(__name__)
 
+POSTAL_CODE_AREA_SOURCE_SRID = 3067
 
-class PostalCodeImporter:
+
+class PostalCodeAreaImporter:
     def __init__(self, province: str = None):
         self.province = province
 
-    def import_postal_codes(self, features: Iterable[Feature]) -> int:
+    def import_postal_code_areas(self, features: Iterable[Feature]) -> int:
         """
-        Go through the given postal code area features, find all addresses
-        that are within each area, and update the postal code of the address
-        accordingly.
+        Go through the given postal code area features
+        and create/update PostalCodeArea objects for each area.
+
+        Also find all addresses that are within each area
+        and update the postal code area of the address.
         """
         total_addresses_updated = 0
 
-        if self.province in MUNICIPALITIES.keys():
-            muni_ids = [
-                muni[1][0].lower() for muni in MUNICIPALITIES[self.province].items()
-            ]
-            # Clear existing postal code areas for one province
-            Address.objects.filter(
-                postal_code_area__isnull=False, municipality__id__in=muni_ids
-            ).update(
-                postal_code_area=None,
-            )
-        else:
-            # Clear existing postal code areas for all provinces
-            Address.objects.filter(postal_code_area__isnull=False).update(
-                postal_code_area=None,
-            )
-
-        # Update postal code for all addresses within each postal code area
+        # Update postal code area for all addresses within each postal code area
         for feature in features:
             geometry = feature.geom.geos
             postal_code = value_or_empty(feature, "posti_alue")
@@ -71,7 +57,7 @@ class PostalCodeImporter:
             postal_code_area.municipality = municipality
 
             if geometry.geom_type == "Polygon":
-                area = MultiPolygon(geometry, srid=3067)
+                area = MultiPolygon(geometry, srid=POSTAL_CODE_AREA_SOURCE_SRID)
             else:
                 area = geometry
             area.transform(settings.PROJECTION_SRID)
@@ -79,7 +65,6 @@ class PostalCodeImporter:
             postal_code_area.save()
 
             addresses = Address.objects.filter(
-                postal_code_area__isnull=True,
                 location__intersects=geometry,
             )
 

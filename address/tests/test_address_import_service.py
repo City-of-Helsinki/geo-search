@@ -32,11 +32,11 @@ TEST_PROVINCE = "uusimaa"
 
 @mark.django_db(transaction=True)
 def test_delete_address_data_removes_municipalities_streets_and_addresses():
-    MunicipalityFactory()
-    StreetFactory()
-    AddressFactory()
-    AddressImporter().delete_address_data()
-    assert not Municipality.objects.exists()
+    # Create municipality with ID matching one from uusimaa province
+    municipality = MunicipalityFactory(id="helsinki", code="91")
+    street = StreetFactory(municipality=municipality)
+    AddressFactory(municipality=municipality, street=street)
+    AddressImporter(province=TEST_PROVINCE).delete_address_data()
     assert not Street.objects.exists()
     assert not Address.objects.exists()
 

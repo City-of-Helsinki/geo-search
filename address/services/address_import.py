@@ -20,6 +20,8 @@ ADDRESS_LOCATION_OFFSET_METERS = 15
 # Write addresses to database after this many instances have been generated
 ADDRESS_BATCH_SIZE = 1000
 
+ADDRESS_SOURCE_SRID = 3067
+
 
 class AddressImporter:
     def __init__(self, province: str = None):
@@ -31,13 +33,8 @@ class AddressImporter:
             muni_ids = [
                 muni[1][0].lower() for muni in MUNICIPALITIES[self.province].items()
             ]
-            Municipality.objects.filter(id__in=muni_ids).delete()
             Street.objects.filter(addresses__municipality_id__in=muni_ids).delete()
             Address.objects.filter(municipality_id__in=muni_ids).delete()
-        else:
-            Municipality.objects.all().delete()
-            Street.objects.all().delete()
-            Address.objects.all().delete()
 
     def import_addresses(self, features: Iterable[Feature]) -> int:
         """Create addresses from the given features."""
@@ -65,8 +62,7 @@ class AddressImporter:
         if not addresses:
             return
         locations = [address.location for address in addresses]
-        srid = locations[0].srid  # Each location has the same SRID
-        transformed_points = MultiPoint(locations, srid=srid)
+        transformed_points = MultiPoint(locations, srid=ADDRESS_SOURCE_SRID)
         transformed_points.transform(settings.PROJECTION_SRID)
         for i, address in enumerate(addresses):
             address.location = transformed_points[i]
