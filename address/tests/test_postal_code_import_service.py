@@ -33,7 +33,7 @@ def test_import_postal_codes():
             "kuntanro": municipality.code,
         }
     )
-    PostalCodeImporter().import_postal_codes([feature])
+    PostalCodeImporter().import_postal_code_areas([feature])
     address.refresh_from_db()
     assert address.postal_code_area.postal_code == postal_code
     address.postal_code_area.set_current_language("sv")
@@ -57,7 +57,7 @@ def test_import_postal_codes_does_not_update_postal_code_if_outside(paavo_shapef
             "kuntanro": 91,
         }
     )
-    PostalCodeImporter().import_postal_codes([feature])
+    PostalCodeImporter().import_postal_code_areas([feature])
     address.refresh_from_db()
     assert not address.postal_code_area
 

@@ -10,6 +10,8 @@ from .import_utils import create_municipality, value_or_empty
 
 logger = logging.getLogger(__name__)
 
+MUNICIPALITY_SOURCE_SRID = 3067
+
 
 class MunicipalityImporter:
     def import_municipalities(self, features: Iterable[Feature]) -> int:
@@ -40,7 +42,7 @@ class MunicipalityImporter:
                 municipality_en=name_fi,
             )
             if geometry.geom_type == "Polygon":
-                area = MultiPolygon(geometry, srid=3067)
+                area = MultiPolygon(geometry, srid=MUNICIPALITY_SOURCE_SRID)
             else:
                 area = geometry
             area.transform(settings.PROJECTION_SRID)

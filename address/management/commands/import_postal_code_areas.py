@@ -9,11 +9,11 @@ from time import time
 from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand
 
-from ...services.postal_code_import import PostalCodeImporter
+from ...services.postal_code_area_import import PostalCodeAreaImporter
 
 
 class Command(BaseCommand):
-    help = "Imports postal codes from the given Paavo shapefiles."
+    help = "Imports postal code areas from the given Paavo shapefiles."
 
     def add_arguments(self, parser) -> None:
         parser.add_argument("province")
@@ -21,13 +21,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         start_time = time()
-        importer = PostalCodeImporter(options["province"])
+        importer = PostalCodeAreaImporter(options["province"])
         paths = options["files"]
         num_addresses_updated = 0
         for path in paths:
             self.stdout.write(f"Reading data from {path}.")
             for layer in DataSource(path, encoding="latin-1"):
-                num_addresses_updated += importer.import_postal_codes(layer)
+                num_addresses_updated += importer.import_postal_code_areas(layer)
         self.stdout.write(
             self.style.SUCCESS(
                 f"{num_addresses_updated} addresses updated "

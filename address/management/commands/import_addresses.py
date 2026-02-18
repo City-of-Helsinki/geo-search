@@ -26,7 +26,10 @@ from ...services.address_import import AddressImporter
 
 
 class Command(BaseCommand):
-    help = "Imports addresses from the given Digiroad shapefiles."
+    help = (
+        "Imports addresses from the given Digiroad shapefiles"
+        "for the specified province."
+    )
 
     def add_arguments(self, parser) -> None:
         parser.add_argument("files", nargs="+", type=Path)
