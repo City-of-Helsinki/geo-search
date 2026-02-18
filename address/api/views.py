@@ -276,9 +276,7 @@ class AddressViewSet(ReadOnlyModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(
-        parameters=_area_parameters + _postal_code_parameters + _municipality_parameters
-    ),
+    list=extend_schema(parameters=_area_parameters + _postal_code_parameters),
     retrieve=extend_schema(parameters=_area_parameters),
 )
 class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
@@ -287,25 +285,9 @@ class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self) -> QuerySet:
         areas = self.queryset
-        areas = self._filter_by_municipality(areas)
-        areas = self._filter_by_municipality_code(areas)
         areas = self._filter_by_postal_code(areas)
         areas = self._filter_by_post_office(areas)
         return areas
-
-    def _filter_by_municipality(self, areas: QuerySet) -> QuerySet:
-        municipality = self.request.query_params.get("municipality")
-        if municipality is None:
-            return areas
-        return areas.filter(
-            municipality__translations__name__iexact=municipality
-        ).distinct()
-
-    def _filter_by_municipality_code(self, areas: QuerySet) -> QuerySet:
-        municipality_code = self.request.query_params.get("municipalitycode")
-        if municipality_code is None:
-            return areas
-        return areas.filter(municipality__code__iexact=municipality_code).distinct()
 
     def _filter_by_postal_code(self, areas: QuerySet) -> QuerySet:
         postal_code = self.request.query_params.get("postalcode")

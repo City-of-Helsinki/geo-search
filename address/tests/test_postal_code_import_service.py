@@ -7,7 +7,7 @@ from django.contrib.gis.geos import Point, Polygon
 from pytest import mark
 
 from ..models import Municipality
-from ..services.postal_code_import import PostalCodeImporter
+from ..services.postal_code_area_import import PostalCodeAreaImporter
 from ..tests.factories import AddressFactory
 
 TEST_GEOMETRY = Polygon.from_bbox([24.9427, 60.1665, 24.9430, 60.1667])
@@ -33,14 +33,13 @@ def test_import_postal_codes():
             "kuntanro": municipality.code,
         }
     )
-    PostalCodeImporter().import_postal_code_areas([feature])
+    PostalCodeAreaImporter().import_postal_code_areas([feature])
     address.refresh_from_db()
     assert address.postal_code_area.postal_code == postal_code
     address.postal_code_area.set_current_language("sv")
     assert address.postal_code_area.name == post_office_sv
     address.postal_code_area.set_current_language("fi")
     assert address.postal_code_area.name == post_office
-    assert address.postal_code_area.municipality.code == str(municipality.code)
 
 
 @mark.django_db(transaction=True)
@@ -48,6 +47,7 @@ def test_import_postal_codes_does_not_update_postal_code_if_outside(paavo_shapef
     address = AddressFactory(
         # Not within the 00100 postal code area
         location=Point(x=27, y=61, srid=settings.PROJECTION_SRID),
+        postal_code_area=None,
     )
     feature = _mock_feature(
         {
@@ -57,7 +57,7 @@ def test_import_postal_codes_does_not_update_postal_code_if_outside(paavo_shapef
             "kuntanro": 91,
         }
     )
-    PostalCodeImporter().import_postal_code_areas([feature])
+    PostalCodeAreaImporter().import_postal_code_areas([feature])
     address.refresh_from_db()
     assert not address.postal_code_area
 

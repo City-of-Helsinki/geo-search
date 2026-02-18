@@ -43,14 +43,6 @@ class PostalCodeArea(TranslatableModel):
     postal_code = models.CharField(
         _("Postal code"), max_length=5, null=True, blank=True
     )
-    municipality = models.ForeignKey(
-        Municipality,
-        models.CASCADE,
-        db_index=True,
-        null=True,
-        blank=True,
-        verbose_name=_("Municipality"),
-    )
     translations = TranslatedFields(
         name=models.CharField(_("Name"), max_length=100, null=True, blank=True)
     )

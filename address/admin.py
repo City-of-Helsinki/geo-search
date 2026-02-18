@@ -33,7 +33,7 @@ class StreetAdmin(TranslatableAdmin):
 
 @admin.register(PostalCodeArea)
 class PostalCodeAreaAdmin(TranslatableAdmin):
-    list_display = ("postal_code", "name", "municipality")
+    list_display = ("postal_code", "name")
     ordering = ("postal_code",)
     search_fields = ("postal_code",)
 

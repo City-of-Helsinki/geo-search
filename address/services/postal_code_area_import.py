@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.gis.gdal.feature import Feature
 from django.contrib.gis.geos import MultiPolygon
 
-from ..models import Address, Municipality, PostalCodeArea
+from ..models import Address, PostalCodeArea
 from .import_utils import value_or_empty
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,6 @@ class PostalCodeAreaImporter:
             post_office_sv = value_or_empty(feature, "namn") or post_office_fi
             if not post_office_fi:
                 post_office_fi = post_office_sv
-            municipality_id = int(value_or_empty(feature, "kuntanro"))
 
             postal_code_area, _ = PostalCodeArea.objects.get_or_create(
                 postal_code=postal_code
@@ -49,12 +48,6 @@ class PostalCodeAreaImporter:
             postal_code_area.name = post_office_sv
             postal_code_area.set_current_language("fi")
             postal_code_area.name = post_office_fi
-
-            try:
-                municipality = Municipality.objects.filter(code=municipality_id).first()
-            except Municipality.DoesNotExist:
-                municipality = None
-            postal_code_area.municipality = municipality
 
             if geometry.geom_type == "Polygon":
                 area = MultiPolygon(geometry, srid=POSTAL_CODE_AREA_SOURCE_SRID)
