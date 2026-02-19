@@ -45,6 +45,9 @@ def test_postal_code_area_serializer():
         "postal_code": postal_code_area.postal_code,
         "area": None,
         "name": {t.language_code: t.name for t in postal_code_area.translations.all()},
+        "post_office": {
+            t.language_code: t.post_office for t in postal_code_area.translations.all()
+        },
     }
 
 
@@ -67,6 +70,10 @@ def test_address_serializer():
             "area": None,
             "name": {
                 t.language_code: t.name
+                for t in address.postal_code_area.translations.all()
+            },
+            "post_office": {
+                t.language_code: t.post_office
                 for t in address.postal_code_area.translations.all()
             },
         },

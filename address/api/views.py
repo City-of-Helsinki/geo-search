@@ -123,6 +123,13 @@ _postal_code_parameters = [
         required=False,
         type=str,
     ),
+    OpenApiParameter(
+        name="postoffice",
+        location=OpenApiParameter.QUERY,
+        description=(
+            "Post office name in Finnish, Swedish or English. "
+            'E.g. "HELSINKI", "HELSINGFORS".'
+        ),
         required=False,
         type=str,
     ),
@@ -174,6 +181,7 @@ class AddressViewSet(ReadOnlyModelViewSet):
         addresses = self._filter_by_municipality(addresses)
         addresses = self._filter_by_municipality_code(addresses)
         addresses = self._filter_by_postal_code(addresses)
+        addresses = self._filter_by_postal_code_area(addresses)
         addresses = self._filter_by_post_office(addresses)
         addresses = self._filter_by_bbox(addresses)
         addresses = self._filter_by_location(addresses)
@@ -232,13 +240,27 @@ class AddressViewSet(ReadOnlyModelViewSet):
             return addresses
         return addresses.filter(postal_code_area__postal_code__iexact=postal_code)
 
-    def _filter_by_post_office(self, addresses: QuerySet) -> QuerySet:
+    def _filter_by_postal_code_area(self, addresses: QuerySet) -> QuerySet:
         postal_code_area = self.request.query_params.get("postalcodearea")
         if postal_code_area is None:
             return addresses
-        return addresses.filter(
-            postal_code_area__translations__name__iexact=postal_code_area
-        ).distinct()
+        postal_code_area_ids = list(
+            PostalCodeArea.objects.filter(
+                translations__name__iexact=postal_code_area
+            ).values_list("id", flat=True)
+        )
+        return addresses.filter(postal_code_area_id__in=postal_code_area_ids)
+
+    def _filter_by_post_office(self, addresses: QuerySet) -> QuerySet:
+        post_office = self.request.query_params.get("postoffice")
+        if post_office is None:
+            return addresses
+        postal_code_area_ids = list(
+            PostalCodeArea.objects.filter(
+                translations__post_office__iexact=post_office
+            ).values_list("id", flat=True)
+        )
+        return addresses.filter(postal_code_area_id__in=postal_code_area_ids)
 
     def _filter_by_bbox(self, addresses: QuerySet) -> QuerySet:
         bbox = self.request.query_params.get("bbox")
@@ -293,6 +315,7 @@ class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
     def get_queryset(self) -> QuerySet:
         areas = self.queryset
         areas = self._filter_by_postal_code(areas)
+        areas = self._filter_by_postal_code_area(areas)
         areas = self._filter_by_post_office(areas)
         return areas
 
@@ -302,13 +325,24 @@ class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
             return areas
         return areas.filter(postal_code__iexact=postal_code)
 
-    def _filter_by_post_office(self, areas: QuerySet) -> QuerySet:
+    def _filter_by_postal_code_area(self, areas: QuerySet) -> QuerySet:
         postal_code_area = self.request.query_params.get("postalcodearea")
         if postal_code_area is None:
             return areas
         area_ids = list(
             PostalCodeArea.objects.filter(
                 translations__name__iexact=postal_code_area
+            ).values_list("id", flat=True)
+        )
+        return areas.filter(id__in=area_ids)
+
+    def _filter_by_post_office(self, areas: QuerySet) -> QuerySet:
+        post_office = self.request.query_params.get("postoffice")
+        if post_office is None:
+            return areas
+        area_ids = list(
+            PostalCodeArea.objects.filter(
+                translations__post_office__iexact=post_office
             ).values_list("id", flat=True)
         )
         return areas.filter(id__in=area_ids)
