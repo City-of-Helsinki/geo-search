@@ -22,7 +22,7 @@ _list_parameters = [
         name="streetname",
         location=OpenApiParameter.QUERY,
         description=(
-            "Street name in Finnish or Swedish. "
+            "Street name in Finnish, Swedish or English. "
             'E.g. "Mannerheimintie" or "Mannerheimvägen".'
         ),
         required=False,
@@ -97,8 +97,9 @@ _area_parameters = [
     OpenApiParameter(
         name="geom_format",
         location=OpenApiParameter.QUERY,
-        description="Area geometry format. "
-        "Available values : geojson, ewkt. Default : geojson",
+        description=(
+            "Area geometry format. Available values : geojson, ewkt. Default : geojson"
+        ),
         required=False,
         type=str,
     ),
@@ -115,8 +116,13 @@ _postal_code_parameters = [
     OpenApiParameter(
         name="postalcodearea",
         location=OpenApiParameter.QUERY,
-        description='Postal code area name in Finnish or Swedish. "'
-        'E.g. "Lappohja" or "Lappvik"',
+        description=(
+            'Postal code area name in Finnish, Swedish or English. "'
+            'E.g. "Lappohja" or "Lappvik"'
+        ),
+        required=False,
+        type=str,
+    ),
         required=False,
         type=str,
     ),
@@ -127,7 +133,8 @@ _municipality_parameters = [
         name="municipality",
         location=OpenApiParameter.QUERY,
         description=(
-            'Municipality name in Finnish or Swedish. E.g. "Helsinki" or "Helsingfors".'
+            "Municipality name in Finnish, Swedish or English. "
+            'E.g. "Helsinki" or "Helsingfors".'
         ),
         required=False,
         type=str,
@@ -299,7 +306,12 @@ class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
         postal_code_area = self.request.query_params.get("postalcodearea")
         if postal_code_area is None:
             return areas
-        return areas.filter(translations__name__iexact=postal_code_area).distinct()
+        area_ids = list(
+            PostalCodeArea.objects.filter(
+                translations__name__iexact=postal_code_area
+            ).values_list("id", flat=True)
+        )
+        return areas.filter(id__in=area_ids)
 
 
 @extend_schema_view(
