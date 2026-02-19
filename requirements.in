@@ -9,6 +9,7 @@ djangorestframework-api-key
 djangorestframework-xml
 drf-spectacular
 psycopg[c]
+requests
 sentry-sdk[django]
 whitenoise
 uwsgi
