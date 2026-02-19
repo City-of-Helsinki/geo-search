@@ -44,7 +44,10 @@ class PostalCodeArea(TranslatableModel):
         _("Postal code"), max_length=5, null=True, blank=True
     )
     translations = TranslatedFields(
-        name=models.CharField(_("Name"), max_length=100, null=True, blank=True)
+        name=models.CharField(_("Name"), max_length=100, null=True, blank=True),
+        post_office=models.CharField(
+            _("Post office"), max_length=100, null=True, blank=True
+        ),
     )
     area = models.MultiPolygonField(
         _("Area"), srid=settings.PROJECTION_SRID, null=True, blank=True
