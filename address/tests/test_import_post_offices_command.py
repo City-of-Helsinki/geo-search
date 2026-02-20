@@ -12,6 +12,15 @@ from address.models import PostalCodeArea
 from address.tests.factories import PostalCodeAreaFactory
 
 
+def get_post_office_translations(area: PostalCodeArea) -> dict[str, str]:
+    """Get post_office translations as a dict with language codes as keys."""
+    translations = {}
+    for lang in ["fi", "sv", "en"]:
+        area.set_current_language(lang)
+        translations[lang] = area.post_office
+    return translations
+
+
 def create_test_zip(zip_path: Path, postal_data: list[tuple[str, str, str]]) -> None:
     """
     Create a test ZIP file with Posti fixed-width format DAT file.
@@ -63,28 +72,25 @@ def test_import_post_offices_from_zip_file(tmp_path):
     call_command("import_post_offices", str(zip_file))
 
     area1.refresh_from_db()
-    area1.set_current_language("fi")
-    assert area1.post_office == "HELSINKI"
-    area1.set_current_language("sv")
-    assert area1.post_office == "HELSINGFORS"
-    area1.set_current_language("en")
-    assert area1.post_office == "HELSINKI"
+    assert get_post_office_translations(area1) == {
+        "fi": "HELSINKI",
+        "sv": "HELSINGFORS",
+        "en": "HELSINKI",
+    }
 
     area2.refresh_from_db()
-    area2.set_current_language("fi")
-    assert area2.post_office == "ESPOO"
-    area2.set_current_language("sv")
-    assert area2.post_office == "ESBO"
-    area2.set_current_language("en")
-    assert area2.post_office == "ESPOO"
+    assert get_post_office_translations(area2) == {
+        "fi": "ESPOO",
+        "sv": "ESBO",
+        "en": "ESPOO",
+    }
 
     area3.refresh_from_db()
-    area3.set_current_language("fi")
-    assert area3.post_office == "ASKOLA"
-    area3.set_current_language("sv")
-    assert area3.post_office == "ASKOLA"
-    area3.set_current_language("en")
-    assert area3.post_office == "ASKOLA"
+    assert get_post_office_translations(area3) == {
+        "fi": "ASKOLA",
+        "sv": "ASKOLA",
+        "en": "ASKOLA",
+    }
 
 
 @mark.django_db
@@ -97,10 +103,11 @@ def test_import_post_offices_uses_finnish_fallback_for_swedish(tmp_path):
     call_command("import_post_offices", str(zip_file))
 
     area.refresh_from_db()
-    area.set_current_language("fi")
-    assert area.post_office == "HELSINKI"
-    area.set_current_language("sv")
-    assert area.post_office == "HELSINKI"
+    assert get_post_office_translations(area) == {
+        "fi": "HELSINKI",
+        "sv": "HELSINKI",  # Should use Finnish as fallback
+        "en": "HELSINKI",
+    }
 
 
 @mark.django_db
@@ -113,10 +120,11 @@ def test_import_post_offices_uses_swedish_fallback_for_finnish(tmp_path):
     call_command("import_post_offices", str(zip_file))
 
     area.refresh_from_db()
-    area.set_current_language("fi")
-    assert area.post_office == "HELSINGFORS"
-    area.set_current_language("sv")
-    assert area.post_office == "HELSINGFORS"
+    assert get_post_office_translations(area) == {
+        "fi": "HELSINGFORS",  # Should use Swedish as fallback
+        "sv": "HELSINGFORS",
+        "en": "HELSINGFORS",
+    }
 
 
 @mark.django_db
@@ -135,8 +143,11 @@ def test_import_post_offices_skips_missing_postal_codes(tmp_path):
     call_command("import_post_offices", str(zip_file))
 
     area.refresh_from_db()
-    area.set_current_language("fi")
-    assert area.post_office == "HELSINKI"
+    assert get_post_office_translations(area) == {
+        "fi": "HELSINKI",
+        "sv": "HELSINGFORS",
+        "en": "HELSINKI",
+    }
 
     assert not PostalCodeArea.objects.filter(postal_code="99999").exists()
 
@@ -154,7 +165,8 @@ def test_import_post_offices_handles_whitespace(tmp_path):
     call_command("import_post_offices", str(zip_file))
 
     area.refresh_from_db()
-    area.set_current_language("fi")
-    assert area.post_office == "HELSINKI"
-    area.set_current_language("sv")
-    assert area.post_office == "HELSINGFORS"
+    assert get_post_office_translations(area) == {
+        "fi": "HELSINKI",
+        "sv": "HELSINGFORS",
+        "en": "HELSINKI",
+    }
