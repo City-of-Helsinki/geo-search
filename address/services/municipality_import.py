@@ -14,7 +14,8 @@ MUNICIPALITY_SOURCE_SRID = 3067
 
 
 class MunicipalityImporter:
-    def import_municipalities(self, features: Iterable[Feature]) -> int:
+    @staticmethod
+    def import_municipalities(features: Iterable[Feature]) -> int:
         """
         Import municipalities from given features to db.
         Also update address municipality according to municipality area.
@@ -24,16 +25,12 @@ class MunicipalityImporter:
 
         # Update municipality for all addresses within each postal code area
         for feature in features:
-            geometry = feature.geom.geos
-            code = int(value_or_empty(feature, "NATCODE"))
-            name_fi = value_or_empty(feature, "NAMEFIN")
-            name_sv = value_or_empty(feature, "NAMESWE") or name_fi
-            if not name_fi and not name_sv:
-                logger.warning(f"Municipality with code {code} has no name, skipping")
+            validated_data = MunicipalityImporter._extract_and_validate_fields(feature)
+            if not validated_data:
                 continue
 
-            if not name_fi:
-                name_fi = name_sv
+            code, name_fi, name_sv = validated_data
+            geometry = feature.geom.geos
 
             municipality = create_municipality(
                 code=code,
@@ -61,3 +58,46 @@ class MunicipalityImporter:
             total_addresses_updated += num_addresses_updated
 
         return total_addresses_updated
+
+    @staticmethod
+    def _extract_and_validate_fields(
+        feature: Feature,
+    ) -> tuple[int, str, str] | None:
+        """Extract and validate required municipality fields from feature.
+
+        Returns:
+            Tuple of (code, name_fi, name_sv) if all validations pass,
+            None if any validation fails.
+
+        Required fields:
+        - NATCODE: Municipality code (must be valid integer)
+        - NAMEFIN or NAMESWE: Municipality name in Finnish or Swedish
+        """
+        nat_code = value_or_empty(feature, "NATCODE")
+        code = None
+
+        if not nat_code:
+            logger.warning("Municipality feature missing NATCODE, skipping")
+        else:
+            try:
+                code = int(nat_code)
+            except ValueError:
+                logger.warning(f"Invalid NATCODE value '{nat_code}', skipping")
+
+        if code is None:
+            return None
+
+        name_fi = value_or_empty(feature, "NAMEFIN")
+        name_sv = value_or_empty(feature, "NAMESWE")
+
+        if not name_fi and not name_sv:
+            logger.warning(f"Municipality with code {nat_code} has no name, skipping")
+            return None
+
+        # Apply fallbacks
+        if not name_sv:
+            name_sv = name_fi
+        if not name_fi:
+            name_fi = name_sv
+
+        return code, name_fi, name_sv
