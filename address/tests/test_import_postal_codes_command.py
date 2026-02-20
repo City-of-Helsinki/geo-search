@@ -13,7 +13,7 @@ def test_import_postal_codes_updates_postal_codes_from_shapefile(paavo_shapefile
         location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID),
         municipality=municipality,
     )
-    call_command("import_postal_code_areas", None, [paavo_shapefile])
+    call_command("import_postal_code_areas", [paavo_shapefile])
     address.refresh_from_db()
     assert address.postal_code_area.postal_code == "00100"
     assert address.postal_code_area.name == "Helsinki Keskusta - Etu-Töölö"
