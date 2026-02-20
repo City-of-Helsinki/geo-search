@@ -14,10 +14,8 @@ POSTAL_CODE_AREA_SOURCE_SRID = 3067
 
 
 class PostalCodeAreaImporter:
-    def __init__(self, province: str = None):
-        self.province = province
-
-    def import_postal_code_areas(self, features: Iterable[Feature]) -> int:
+    @staticmethod
+    def import_postal_code_areas(features: Iterable[Feature]) -> int:
         """
         Go through the given postal code area features
         and create/update PostalCodeArea objects for each area.
