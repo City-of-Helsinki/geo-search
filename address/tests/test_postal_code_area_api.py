@@ -36,12 +36,14 @@ def test_postal_code_area_api_includes_post_office_translations(api_client: APIC
 
     assert data["postal_code"] == "00900"
 
-    assert "post_office" in data
-    assert data["post_office"]["fi"] == "HELSINKI"
-    assert data["post_office"]["sv"] == "HELSINGFORS"
-    assert data["post_office"]["en"] == "HELSINKI"
+    assert data["post_office"] == {
+        "fi": "HELSINKI",
+        "sv": "HELSINGFORS",
+        "en": "HELSINKI",
+    }
 
-    assert "name" in data
-    assert data["name"]["fi"] == "Helsinki Keskusta"
-    assert data["name"]["sv"] == "Helsingfors Centrum"
-    assert data["name"]["en"] == "Helsinki Centre"
+    assert data["name"] == {
+        "fi": "Helsinki Keskusta",
+        "sv": "Helsingfors Centrum",
+        "en": "Helsinki Centre",
+    }
