@@ -74,6 +74,12 @@ class AddressImporter:
 
         # Create the municipality and street if they don't exist yet
         municipality_code = int(value_or_empty(feature, "KUNTAKOODI"))
+
+        # Validate that municipality code exists in the province's municipality list
+        if municipality_code not in MUNICIPALITIES[self.province]:
+            # Skip this feature - municipality code not defined for this province
+            return []
+
         municipality_fi, municipality_sv = MUNICIPALITIES[self.province][
             municipality_code
         ]
