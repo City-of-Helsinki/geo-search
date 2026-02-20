@@ -41,6 +41,85 @@ Create the PostGIS extension if needed
 
     sudo -u postgres psql -c 'CREATE EXTENSION postgis;'
 
+## Import or re-import data
+
+The project includes convenient shell scripts for importing geospatial
+data from various sources.
+
+### Available import scripts
+
+* `scripts/import-municipalities-data.sh` - Import municipalities from NLS (requires manual download)
+* `scripts/import-digiroad-data.sh` - Import address data from Digiroad / Finnish Transport Infrastructure Agency
+* `scripts/import-paavo-data.sh` - Import postal code areas from Paavo / Statistics Finland
+* `scripts/import-post-office-data.sh` - Import post office names from Posti
+* `scripts/delete-address-data.sh` - Delete all address data (with confirmation)
+
+### First-time import
+
+**Important:** Municipality data must be imported first, before importing addresses.
+
+#### 1. Import municipalities (required, manual download)
+
+Municipality data must be manually downloaded from NLS:
+
+1. Visit [NLS Administrative Areas](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/datasets-and-interfaces/product-descriptions/division-administrative-areas-vector)
+2. Download the dataset following NLS's download process
+3. Extract the ZIP file to a directory (e.g., `/tmp/nls/`)
+4. Run the import script:
+
+        ./scripts/import-municipalities-data.sh /tmp/nls/SuomenKuntajako_2026_10k.shp
+
+#### 2. Import addresses and other data
+
+After municipalities are imported, import other data:
+
+    # Import addresses (required, specify province)
+    ./scripts/import-digiroad-data.sh uusimaa
+
+    # Import postal code areas (optional, specify province)
+    ./scripts/import-paavo-data.sh uusimaa
+
+    # Import post office names (optional, downloads latest data)
+    ./scripts/import-post-office-data.sh
+
+Available provinces: `uusimaa` and `varsinais-suomi`
+
+### Re-importing data
+
+To re-import data (e.g., after updates):
+
+    # Delete existing address data (prompts for confirmation)
+    ./scripts/delete-address-data.sh
+
+    # Re-import municipalities if needed
+    ./scripts/import-municipalities-data.sh /path/to/SuomenKuntajako_2026_10k.shp
+
+    # Re-import other data
+    ./scripts/import-digiroad-data.sh uusimaa
+    ./scripts/import-paavo-data.sh uusimaa
+    ./scripts/import-post-office-data.sh
+
+### Manual import using Django commands
+
+You can also use the Django management commands directly:
+
+    # Import municipalities (required first, manual download needed)
+    python manage.py import_municipalities <path-to-shapefile>
+
+    # Import addresses
+    python manage.py import_addresses <path-to-shapefiles> <province>
+
+    # Import postal code areas
+    python manage.py import_postal_code_areas <province> <path-to-shapefiles>
+
+    # Import post office names
+    python manage.py import_post_offices <path-to-zip-file>
+    # or download directly:
+    python manage.py import_post_offices --url <url-to-posti-zip>
+
+    # Delete all address data
+    python manage.py delete_address_data
+
 ## Keeping Python requirements up to date
 
 1. Add new packages to `requirements.in` or `requirements-dev.in`
