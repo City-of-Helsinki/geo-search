@@ -1,6 +1,7 @@
 """
 This management command imports municipalities from NLS data:
-https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/datasets-and-interfaces/product-descriptions/division-administrative-areas-vector
+https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/datasets-and-interfaces/
+product-descriptions/division-administrative-areas-vector
 
 Data requires manual downloading and unzipping. The shapefiles can be given to
 the management command as arguments:
