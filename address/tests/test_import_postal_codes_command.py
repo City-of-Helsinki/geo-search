@@ -8,7 +8,7 @@ from .factories import AddressFactory, MunicipalityFactory
 
 @mark.django_db
 def test_import_postal_codes_updates_postal_codes_from_shapefile(paavo_shapefile):
-    municipality = MunicipalityFactory(code="91")
+    municipality = MunicipalityFactory(code="091")
     address = AddressFactory(
         location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID),
         municipality=municipality,

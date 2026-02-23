@@ -17,9 +17,16 @@ def value_or_empty(feature: Feature, key: str) -> str:
 
 @lru_cache(maxsize=None)  # noqa: B019
 def create_municipality(
-    code: int, municipality_fi: str, municipality_sv: str, municipality_en: str
+    code: str, municipality_fi: str, municipality_sv: str, municipality_en: str
 ) -> Municipality:
-    """Create a new municipality if it does not exist already, and return it."""
+    """Create a new municipality if it does not exist already, and return it.
+
+    Args:
+        code: 3-character municipality code (e.g., "091" for Helsinki)
+        municipality_fi: Finnish name
+        municipality_sv: Swedish name
+        municipality_en: English name
+    """
     municipality, _ = Municipality.objects.get_or_create(id=municipality_fi.lower())
     municipality.set_current_language("en")
     municipality.name = municipality_en

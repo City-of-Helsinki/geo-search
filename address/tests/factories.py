@@ -7,7 +7,7 @@ from ..models import Address, Municipality, PostalCodeArea, Street
 class MunicipalityFactory(DjangoModelFactory):
     id = LazyAttribute(lambda o: o.name.lower())
     name = Faker("city", locale="fi_FI")
-    code = Faker("random_element", elements=("91", "92", "106"), locale="fi_FI")
+    code = Faker("random_element", elements=("091", "092", "106"), locale="fi_FI")
 
     @post_generation
     def post(self, *_, **__):

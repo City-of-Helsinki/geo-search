@@ -62,7 +62,7 @@ class MunicipalityImporter:
     @staticmethod
     def _extract_and_validate_fields(
         feature: Feature,
-    ) -> tuple[int, str, str] | None:
+    ) -> tuple[str, str, str] | None:
         """Extract and validate required municipality fields from feature.
 
         Returns:
@@ -70,7 +70,7 @@ class MunicipalityImporter:
             None if any validation fails.
 
         Required fields:
-        - NATCODE: Municipality code (must be valid integer)
+        - NATCODE: Municipality code (must be valid integer, converted to 3-char string)
         - NAMEFIN or NAMESWE: Municipality name in Finnish or Swedish
         """
         nat_code = value_or_empty(feature, "NATCODE")
@@ -80,7 +80,7 @@ class MunicipalityImporter:
             logger.warning("Municipality feature missing NATCODE, skipping")
         else:
             try:
-                code = int(nat_code)
+                code = str(int(nat_code)).zfill(3)
             except ValueError:
                 logger.warning(f"Invalid NATCODE value '{nat_code}', skipping")
 

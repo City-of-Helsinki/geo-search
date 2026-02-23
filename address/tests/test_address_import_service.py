@@ -11,7 +11,7 @@ from ..services.address_import import AddressImporter
 from ..tests.factories import AddressFactory, MunicipalityFactory, StreetFactory
 
 TEST_FEATURE_FIELDS = {
-    "KUNTAKOODI": 91,
+    "KUNTAKOODI": "091",
     "TIENIMI_SU": "Testikatu",
     "TIENIMI_RU": "Testgatan",
     "ENS_TALO_O": 1,
@@ -33,7 +33,7 @@ TEST_PROVINCE = "uusimaa"
 @mark.django_db(transaction=True)
 def test_delete_address_data_removes_municipalities_streets_and_addresses():
     # Create municipality with ID matching one from uusimaa province
-    municipality = MunicipalityFactory(id="helsinki", code="91")
+    municipality = MunicipalityFactory(id="helsinki", code="091")
     street = StreetFactory(municipality=municipality)
     AddressFactory(municipality=municipality, street=street)
     AddressImporter(province=TEST_PROVINCE).delete_address_data()
@@ -71,7 +71,7 @@ def test_import_addresses_does_nothing_if_street_number_is_missing():
 
 @mark.django_db
 def test_import_addresses_creates_municipalities():
-    feature = _mock_feature({**TEST_FEATURE_FIELDS, "KUNTAKOODI": 49})
+    feature = _mock_feature({**TEST_FEATURE_FIELDS, "KUNTAKOODI": "049"})
     AddressImporter(TEST_PROVINCE).import_addresses([feature])
     assert Municipality.objects.translated(name="Espoo").count() == 1
 
@@ -79,7 +79,7 @@ def test_import_addresses_creates_municipalities():
 @mark.django_db
 def test_import_addresses_creates_streets():
     feature = _mock_feature(
-        {**TEST_FEATURE_FIELDS, "KUNTAKOODI": 149, "TIENIMI_SU": "CreationTest"}
+        {**TEST_FEATURE_FIELDS, "KUNTAKOODI": "149", "TIENIMI_SU": "CreationTest"}
     )
     AddressImporter(TEST_PROVINCE).import_addresses([feature])
     assert Street.objects.translated(name="CreationTest").count() == 1
@@ -87,7 +87,7 @@ def test_import_addresses_creates_streets():
 
 @mark.django_db
 def test_import_addresses_creates_addresses():
-    feature = _mock_feature({**TEST_FEATURE_FIELDS, "KUNTAKOODI": 186})
+    feature = _mock_feature({**TEST_FEATURE_FIELDS, "KUNTAKOODI": "186"})
     AddressImporter(TEST_PROVINCE).import_addresses([feature])
     street = Street.objects.get()
     expected_locations = [

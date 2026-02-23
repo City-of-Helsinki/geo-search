@@ -105,7 +105,7 @@ def test_filter_addresses_by_municipality(api_client: APIClient):
 
 @mark.django_db
 def test_filter_addresses_by_municipality_code(api_client: APIClient):
-    municipality = MunicipalityFactory(code="91")
+    municipality = MunicipalityFactory(code="091")
     match = AddressFactory(municipality=municipality)
     serializer = AddressSerializer()
     response = api_client.get(

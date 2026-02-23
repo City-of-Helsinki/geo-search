@@ -72,20 +72,9 @@ class AddressImporter:
         if not self._has_required_fields(feature):
             return []
 
-        # Create the municipality and street if they don't exist yet
-        municipality_code = int(value_or_empty(feature, "KUNTAKOODI"))
-
-        # Validate that municipality code exists in the province's municipality list
-        if municipality_code not in MUNICIPALITIES[self.province]:
-            # Skip this feature - municipality code not defined for this province
+        municipality = self._get_municipality(feature)
+        if municipality is None:
             return []
-
-        municipality_fi, municipality_sv = MUNICIPALITIES[self.province][
-            municipality_code
-        ]
-        municipality = create_municipality(
-            municipality_code, municipality_fi, municipality_sv, municipality_fi
-        )
 
         street_name_fi = value_or_empty(feature, "TIENIMI_SU")
         street_name_sv = value_or_empty(feature, "TIENIMI_RU") or street_name_fi
@@ -247,6 +236,24 @@ class AddressImporter:
         street.name = name_fi
         street.save()
         return street
+
+    def _get_municipality(self, feature: Feature) -> Municipality | None:
+        """Parse and validate municipality code from feature and return a
+        Municipality instance, or None if the code is missing or unknown.
+        """
+        raw = value_or_empty(feature, "KUNTAKOODI")
+        try:
+            municipality_code = str(int(raw)).zfill(3)
+        except ValueError:
+            return None
+        if municipality_code not in MUNICIPALITIES[self.province]:
+            return None
+        municipality_fi, municipality_sv = MUNICIPALITIES[self.province][
+            municipality_code
+        ]
+        return create_municipality(
+            municipality_code, municipality_fi, municipality_sv, municipality_fi
+        )
 
     def _has_required_fields(self, feature: Feature) -> bool:
         """Check whether the feature contains street name, first/last numbers
