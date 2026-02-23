@@ -16,7 +16,7 @@ TEST_GEOMETRY.srid = settings.PROJECTION_SRID
 
 @mark.django_db(transaction=True)
 def test_import_postal_codes():
-    municipality = Municipality.objects.create(code=91, id="helsinki")
+    municipality = Municipality.objects.create(code="091", id="helsinki")
     address = AddressFactory(
         location=Point(x=24.9428, y=60.1666, srid=settings.PROJECTION_SRID),
         municipality=municipality,

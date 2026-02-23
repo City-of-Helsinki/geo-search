@@ -149,7 +149,7 @@ _municipality_parameters = [
     OpenApiParameter(
         name="municipalitycode",
         location=OpenApiParameter.QUERY,
-        description='Municipality code, e.g. "91".',
+        description='Municipality code, e.g. "091".',
         required=False,
         type=str,
     ),
