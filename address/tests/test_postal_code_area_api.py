@@ -28,21 +28,24 @@ def test_postal_code_area_api_includes_post_office_translations(api_client: APIC
 
     area.save()
 
-    url = reverse("address:postalcodearea-detail", kwargs={"pk": area.pk})
-    response = api_client.get(url)
+    url = reverse("address:postalcodearea-list")
+    response = api_client.get(url, {"postalcode": "00900"})
 
     assert response.status_code == 200
     data = response.json()
 
-    assert data["postal_code"] == "00900"
+    assert data["count"] == 1
+    result = data["results"][0]
 
-    assert data["post_office"] == {
+    assert result["postal_code"] == "00900"
+
+    assert result["post_office"] == {
         "fi": "HELSINKI",
         "sv": "HELSINGFORS",
         "en": "HELSINKI",
     }
 
-    assert data["name"] == {
+    assert result["name"] == {
         "fi": "Helsinki Keskusta",
         "sv": "Helsingfors Centrum",
         "en": "Helsinki Centre",
