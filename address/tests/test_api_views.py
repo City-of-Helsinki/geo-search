@@ -4,7 +4,11 @@ from django.urls import reverse
 from pytest import mark
 from rest_framework.test import APIClient
 
-from ..api.serializers import AddressSerializer, PostalCodeAreaSerializer
+from ..api.serializers import (
+    AddressSerializer,
+    MunicipalitySerializer,
+    PostalCodeAreaSerializer,
+)
 from ..tests.factories import (
     AddressFactory,
     MunicipalityFactory,
@@ -277,6 +281,42 @@ def test_filter_postal_area_codes_by_post_office(api_client: APIClient):
     response = api_client.get(
         reverse("address:postalcodearea-list"),
         {"postalcodearea": match.name},
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }
+
+
+@mark.django_db
+def test_filter_municipalities_by_municipality_name(api_client: APIClient):
+    MunicipalityFactory(name="Vantaa", code="092")
+    match = MunicipalityFactory(name="Helsinki", code="091")
+    serializer = MunicipalitySerializer()
+    response = api_client.get(
+        reverse("address:municipality-list"),
+        {"municipality": match.name},
+    )
+    assert response.status_code == 200
+    assert response.data == {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [serializer.to_representation(match)],
+    }
+
+
+@mark.django_db
+def test_filter_municipalities_by_municipality_code(api_client: APIClient):
+    MunicipalityFactory(name="Vantaa", code="092")
+    match = MunicipalityFactory(name="Helsinki", code="091")
+    serializer = MunicipalitySerializer()
+    response = api_client.get(
+        reverse("address:municipality-list"),
+        {"municipalitycode": match.code},
     )
     assert response.status_code == 200
     assert response.data == {

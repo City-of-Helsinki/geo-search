@@ -349,9 +349,32 @@ class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
 
 
 @extend_schema_view(
-    list=extend_schema(parameters=_area_parameters),
+    list=extend_schema(parameters=_area_parameters + _municipality_parameters),
     retrieve=extend_schema(parameters=_area_parameters),
 )
 class MunicipalityViewSet(ReadOnlyModelViewSet):
     queryset = Municipality.objects.order_by("pk").prefetch_related("translations")
     serializer_class = MunicipalitySerializer
+
+    def get_queryset(self) -> QuerySet:
+        municipalities = self.queryset
+        municipalities = self._filter_by_municipality(municipalities)
+        municipalities = self._filter_by_municipality_code(municipalities)
+        return municipalities
+
+    def _filter_by_municipality(self, municipalities: QuerySet) -> QuerySet:
+        municipality = self.request.query_params.get("municipality")
+        if municipality is None:
+            return municipalities
+        municipality_ids = list(
+            Municipality.objects.filter(
+                translations__name__iexact=municipality
+            ).values_list("id", flat=True)
+        )
+        return municipalities.filter(id__in=municipality_ids)
+
+    def _filter_by_municipality_code(self, municipalities: QuerySet) -> QuerySet:
+        municipality_code = self.request.query_params.get("municipalitycode")
+        if municipality_code is None:
+            return municipalities
+        return municipalities.filter(code=municipality_code)
