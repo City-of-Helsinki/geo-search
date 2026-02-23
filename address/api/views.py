@@ -6,7 +6,8 @@ from django.contrib.gis.measure import D
 from django.db.models import Q, QuerySet
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework.exceptions import ParseError
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.mixins import ListModelMixin
+from rest_framework.viewsets import GenericViewSet
 
 from address.models import Street
 
@@ -164,7 +165,7 @@ _municipality_parameters = [
         + _municipality_parameters
     )
 )
-class AddressViewSet(ReadOnlyModelViewSet):
+class AddressViewSet(ListModelMixin, GenericViewSet):
     queryset = Address.objects.order_by("pk").prefetch_related(
         "street__translations",
         "postal_code_area__translations",
@@ -306,9 +307,8 @@ class AddressViewSet(ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(parameters=_area_parameters + _postal_code_parameters),
-    retrieve=extend_schema(parameters=_area_parameters),
 )
-class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
+class PostalCodeAreaViewSet(ListModelMixin, GenericViewSet):
     queryset = PostalCodeArea.objects.order_by("pk").prefetch_related("translations")
     serializer_class = PostalCodeAreaSerializer
 
@@ -350,9 +350,8 @@ class PostalCodeAreaViewSet(ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(parameters=_area_parameters + _municipality_parameters),
-    retrieve=extend_schema(parameters=_area_parameters),
 )
-class MunicipalityViewSet(ReadOnlyModelViewSet):
+class MunicipalityViewSet(ListModelMixin, GenericViewSet):
     queryset = Municipality.objects.order_by("pk").prefetch_related("translations")
     serializer_class = MunicipalitySerializer
 
