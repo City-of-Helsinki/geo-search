@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.4.1...geo-search-v2.0.0) (2026-02-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* Detail endpoints removed for address, municipality and postal code area resources. Clients must use list endpoints with filters instead of retrieving resources by ID.
+* municipality-field is no longer accessible in PostalCodeArea after this change.
+
+### Features
+
+* Add delete address data management command ([cd7b2bc](https://github.com/City-of-Helsinki/geo-search/commit/cd7b2bc657907018444188bf5c6d8cc6bb844f5d))
+* Add delete-address-data.sh convenience script ([85f7b8b](https://github.com/City-of-Helsinki/geo-search/commit/85f7b8b6d352c451a20e183d6d1cbf7c968110f5))
+* Add english language support ([7765b27](https://github.com/City-of-Helsinki/geo-search/commit/7765b273edd9c851ec9b21f939c75f78c8e6472e))
+* Add import-municipalities-data.sh script ([bb64454](https://github.com/City-of-Helsinki/geo-search/commit/bb64454149131523c92cac3f93be54defc8611b1))
+* Add multilingual post_office field and API filtering ([af0ef31](https://github.com/City-of-Helsinki/geo-search/commit/af0ef31e459d69bcc9cfcffe65a06aa261404248))
+* Add municipality filter parameters to MunicipalityViewSet ([234dd12](https://github.com/City-of-Helsinki/geo-search/commit/234dd12e2d72fba0b8d00fff322ad79026d04109))
+* Remove API detail endpoints ([f82664e](https://github.com/City-of-Helsinki/geo-search/commit/f82664e379e145eaea3e11a7d7c1bfb4958df8be))
+* Remove municipality from PostalCodeArea ([419712c](https://github.com/City-of-Helsinki/geo-search/commit/419712c8277276e84883ca533a3e400d3689c7d8))
+* Remove province from postal code area import ([7bda330](https://github.com/City-of-Helsinki/geo-search/commit/7bda3309d08606949b6c88db9415e2e00edd2558))
+* Update Django Admin configs ([d9355a8](https://github.com/City-of-Helsinki/geo-search/commit/d9355a8baec0c3339757fc0a69836bc21b39817a))
+* Update model verbose names and translations ([f73b183](https://github.com/City-of-Helsinki/geo-search/commit/f73b18359a8cb4c530f0764ce418ad2f0ff4b5a1))
+* Use explicit source srids ([cd93fec](https://github.com/City-of-Helsinki/geo-search/commit/cd93fec7daa8c96b1743d30c5efe816714f485d1))
+
+
+### Bug Fixes
+
+* Improve MunicipalityImporter validation ([a129535](https://github.com/City-of-Helsinki/geo-search/commit/a129535ec8e21490cce81b687b2633e6828f8516))
+* Update import scripts ([cab0402](https://github.com/City-of-Helsinki/geo-search/commit/cab0402bbb2d5bd07852b7bba5ab06add97db355))
+* Use 3-char string municipality codes ([0ba5a63](https://github.com/City-of-Helsinki/geo-search/commit/0ba5a63ce23236a707080c6e1ad7c7ca0aefeb8f))
+* Validate municipality_code in address import ([80fe659](https://github.com/City-of-Helsinki/geo-search/commit/80fe6599989a924b5a9faa4d9076686e0101d810))
+
+
+### Performance Improvements
+
+* **postal code areas search:** Use subquery instead of distinct ([1eca69c](https://github.com/City-of-Helsinki/geo-search/commit/1eca69c366721db4461bc2ec2d5a6f56be0bc0a7))
+
+
+### Dependencies
+
+* Add requests-package ([931effb](https://github.com/City-of-Helsinki/geo-search/commit/931effb1372c020e77237c1df33921a734d28ec2))
+
+
+### Documentation
+
+* Add comprehensive data import/re-import guide ([3c8e1f5](https://github.com/City-of-Helsinki/geo-search/commit/3c8e1f5a9f0e09c8289c995ee91bec85a48b5e29))
+
 ## [1.4.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v1.4.0...geo-search-v1.4.1) (2026-02-05)
 
 
