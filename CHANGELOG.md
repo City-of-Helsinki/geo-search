@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.0.1...geo-search-v2.0.2) (2026-03-17)
+
+
+### Dependencies
+
+* Bump orjson from 3.11.4 to 3.11.6 ([a61ee51](https://github.com/City-of-Helsinki/geo-search/commit/a61ee51c4370e4dd5f90f54637b4115a91204817))
+
 ## [2.0.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.0.0...geo-search-v2.0.1) (2026-03-09)
 
 
