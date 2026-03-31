@@ -50,6 +50,9 @@ if env_path.exists():
 DEBUG = env.bool("DEBUG")
 DEBUG_TOOLBAR = env.bool("DEBUG_TOOLBAR")
 
+# Django helsinki health endpoints
+SENTRY_RELEASE = env.str("SENTRY_RELEASE")
+
 SECRET_KEY = env.str("SECRET_KEY")
 if DEBUG and not SECRET_KEY:
     SECRET_KEY = "secret-for-debugging-only"
@@ -77,7 +80,7 @@ if env("SENTRY_DSN"):
     sentry_sdk.init(
         dsn=env("SENTRY_DSN"),
         environment=env("SENTRY_ENVIRONMENT"),
-        release=env("SENTRY_RELEASE"),
+        release=SENTRY_RELEASE,
         integrations=[DjangoIntegration()],
         traces_sampler=sentry_traces_sampler,
         profile_session_sample_rate=env("SENTRY_PROFILE_SESSION_SAMPLE_RATE"),
@@ -100,6 +103,7 @@ INSTALLED_APPS = [
     "parler",
     "drf_spectacular",
     "gisserver",
+    "helsinki_health_endpoints",
     # Local apps
     "address",
 ]
