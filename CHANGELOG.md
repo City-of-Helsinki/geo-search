@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.0.2...geo-search-v2.1.0) (2026-04-02)
+
+
+### Features
+
+* Use django-helsinki-health-endpoints for readiness and healthz ([ca4f30a](https://github.com/City-of-Helsinki/geo-search/commit/ca4f30aa9600f425ea27311eb72ac0f30d56a947))
+
+
+### Dependencies
+
+* Bump pygments from 2.19.2 to 2.20.0 ([6f50dbb](https://github.com/City-of-Helsinki/geo-search/commit/6f50dbbd643d22cc25a8a5b78594c05487d9894a))
+* Bump requests from 2.32.5 to 2.33.0 ([af57bd9](https://github.com/City-of-Helsinki/geo-search/commit/af57bd9c4e3caf44ffa72baa02a716743b50b91c))
+
 ## [2.0.2](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.0.1...geo-search-v2.0.2) (2026-03-17)
 
 
