@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.2](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.1...geo-search-v2.1.2) (2026-04-14)
+
+
+### Dependencies
+
+* Bump pytest from 9.0.1 to 9.0.3 ([4d31006](https://github.com/City-of-Helsinki/geo-search/commit/4d310066df1035776a1cba01c24d0fe186ddb2ef))
+
 ## [2.1.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.0...geo-search-v2.1.1) (2026-04-09)
 
 
