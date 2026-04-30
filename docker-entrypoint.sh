@@ -3,7 +3,7 @@
 set -e
 
 # Wait for the database to be available
-if [ -n "$DATABASE_HOST" ]; then
+if [[ -n "$DATABASE_HOST" ]]; then
   until nc -z -v -w30 "$DATABASE_HOST" 5432
   do
     echo "Waiting for PostgreSQL database connection..."
