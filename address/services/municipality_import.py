@@ -57,6 +57,8 @@ class MunicipalityImporter:
             logger.info(f"{code}, {name_fi}, {name_sv}, {num_addresses_updated}")
             total_addresses_updated += num_addresses_updated
 
+        logger.info(f"Number of municipalities updated: {total_municipalities_updated}")
+
         return total_addresses_updated
 
     @staticmethod
