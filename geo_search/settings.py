@@ -30,7 +30,7 @@ env = Env(
     STATIC_URL=(str, "/static/"),
     DATABASE_URL=(
         str,
-        "postgis://geo-search:geo-search@localhost:5432/geo-search",
+        "postgis:///geo-search",
     ),
     DATABASE_PASSWORD=(str, ""),
     SENTRY_DSN=(str, ""),
@@ -54,8 +54,7 @@ DEBUG_TOOLBAR = env.bool("DEBUG_TOOLBAR")
 SENTRY_RELEASE = env.str("SENTRY_RELEASE")
 
 SECRET_KEY = env.str("SECRET_KEY")
-if DEBUG and not SECRET_KEY:
-    SECRET_KEY = "secret-for-debugging-only"
+
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 SENTRY_TRACES_SAMPLE_RATE = env("SENTRY_TRACES_SAMPLE_RATE")
