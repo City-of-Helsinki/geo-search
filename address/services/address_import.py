@@ -23,6 +23,153 @@ ADDRESS_BATCH_SIZE = 1000
 ADDRESS_SOURCE_SRID = 3067
 
 
+def _transform_address_locations(addresses: list[Address]) -> None:
+    """
+    Transforms the locations of each given address to the projection given in
+    settings.The points are transformed in bulk through a MultiPoint because
+    it's significantly faster than transforming each point individually.
+    """
+    if not addresses:
+        return
+    locations = [address.location for address in addresses]
+    transformed_points = MultiPoint(locations, srid=ADDRESS_SOURCE_SRID)
+    transformed_points.transform(settings.PROJECTION_SRID)
+    for i, address in enumerate(addresses):
+        address.location = transformed_points[i]
+
+
+def _find_numbers(feature: Feature, right_side: bool = False) -> range:
+    """Find the numbers on the given side of the street from the feature."""
+    # Get first and last building numbers on this side of the street from the
+    # feature
+    if right_side:
+        first_number = feature["ENS_TALO_O"].value
+        last_number = feature["VIIM_TAL_O"].value
+    else:
+        first_number = feature["ENS_TALO_V"].value
+        last_number = feature["VIIM_TAL_V"].value
+
+    if first_number is None or last_number is None:
+        return range(0)  # This side of the street has no buildings
+
+    # Depending on the digitizing direction, for some street links
+    # the last and first number might be in the opposite order.
+    if last_number < first_number:
+        number_increment = -2
+        last_number_offset = -1
+    else:
+        number_increment = 2
+        last_number_offset = 1
+
+    return range(first_number, last_number + last_number_offset, number_increment)
+
+
+def _compute_normals(line_string: LineString) -> dict[float, tuple[float, float]]:
+    """
+    Compute a lookup table for the normals for each line segment in the line string.
+    This is done so that given an interpolated distance (between 0 and 1) on the
+    line string, we can quickly find the normal at that distance.
+    """
+    normals = {}
+    start_x, start_y = line_string[0][:2]
+    for end_x, end_y, *_ in line_string[1:]:
+        if (end_x, end_y) == line_string[-1][:2]:
+            distance = 1  # Make sure distance 1 ends at the last point
+        else:
+            distance = line_string.project_normalized(Point(end_x, end_y))
+        # Calculate the normal
+        dx = end_x - start_x
+        dy = end_y - start_y
+        length = sqrt(dx**2 + dy**2)
+        normal = -dy / length, dx / length
+        # Associate with the distance for fast lookup of the
+        # normal between the current start point and end point.
+        normals[distance] = normal
+        start_x, start_y = end_x, end_y
+    return normals
+
+
+def _find_normal(
+    distance: float, normals: dict, opposite: bool = False
+) -> tuple[float, float]:
+    """
+    Given an distance between 0 and 1 on the line string, find the normal
+    (or its opposite) from the provided dictionary.
+    """
+    distances = list(normals.keys())
+    distance_index = bisect_left(distances, distance)
+    normal_index = distances[distance_index]
+    x, y = normals[normal_index]
+    # If we are creating addresses for the right side of the street,
+    # we need the normal pointing in the opposite direction.
+    if opposite:
+        return -x, -y
+    return x, y
+
+
+def _has_required_fields(feature: Feature) -> bool:
+    """Check whether the feature contains street name, first/last numbers
+    and municipality code.
+    """
+    street_keys = ["TIENIMI_SU", "TIENIMI_RU"]
+    number_keys = ["ENS_TALO_O", "ENS_TALO_V", "VIIM_TAL_O", "VIIM_TAL_V"]
+    municipality_key = "KUNTAKOODI"
+    has_street = any(feature[key].value for key in street_keys)
+    has_number = any(feature[key].value for key in number_keys)
+    has_municipality = feature[municipality_key].value
+    return has_street and has_number and has_municipality
+
+
+def _build_addresses_on_side(
+    street: Street,
+    municipality: Municipality,
+    feature: Feature,
+    normals: dict[float, tuple[float, float]],
+    right_side: bool,
+) -> list[Address]:
+    """Constructs addresses for one side (right or left) of a street."""
+    numbers = _find_numbers(feature, right_side)
+    if not numbers:
+        return []  # No buildings on this side of the street
+
+    # The street numbers are spread evenly to the length of the street link. This
+    # means that if there is only one number, the address location will be in the
+    # middle (normalized distance 0.5) of the line segment. If there are two
+    # numbers, they will be at distance 0.25 and 0.75, and so on.
+    interval = 1.0 / len(numbers)
+    start_distance = interval / 2
+
+    line_string = feature.geom.geos
+    addresses = []
+    for i, number in enumerate(numbers):
+        # Distance between 0 and 1 on the line string where the address should
+        # be placed
+        distance = start_distance + i * interval
+
+        # To be able to translate the location towards the side of the street,
+        # we need to find the normal of the street at the given distance.
+        normal_x, normal_y = _find_normal(distance, normals, right_side)
+
+        # Now we can find the exact point on the line string at the given distance,
+        # and translate it along the normal.
+        street_location = line_string.interpolate_normalized(distance)
+        location = Point(
+            x=street_location.x + normal_x * ADDRESS_LOCATION_OFFSET_METERS,
+            y=street_location.y + normal_y * ADDRESS_LOCATION_OFFSET_METERS,
+            srid=street_location.srid,
+        )
+        addresses.append(
+            Address(
+                street=street,
+                municipality=municipality,
+                number=number,
+                location=location,
+            )
+        )
+
+    return addresses
+
+
 class AddressImporter:
     def __init__(self, province: str = None):
         self.province = province
@@ -45,31 +192,17 @@ class AddressImporter:
             num_addresses += len(feature_addresses)
             addresses.extend(feature_addresses)
             if len(addresses) > ADDRESS_BATCH_SIZE:
-                self._transform_address_locations(addresses)
+                _transform_address_locations(addresses)
                 Address.objects.bulk_create(addresses)
                 addresses.clear()
 
-        self._transform_address_locations(addresses)
+        _transform_address_locations(addresses)
         Address.objects.bulk_create(addresses)
         return num_addresses
 
-    def _transform_address_locations(self, addresses: list[Address]) -> None:
-        """
-        Transforms the locations of each given address to the projection given in
-        settings.The points are transformed in bulk through a MultiPoint because
-        it's significantly faster than transforming each point individually.
-        """
-        if not addresses:
-            return
-        locations = [address.location for address in addresses]
-        transformed_points = MultiPoint(locations, srid=ADDRESS_SOURCE_SRID)
-        transformed_points.transform(settings.PROJECTION_SRID)
-        for i, address in enumerate(addresses):
-            address.location = transformed_points[i]
-
     def _build_addresses_from_feature(self, feature: Feature) -> list[Address]:
         """Construct addresses from the given feature."""
-        if not self._has_required_fields(feature):
+        if not _has_required_fields(feature):
             return []
 
         municipality = self._get_municipality(feature)
@@ -90,135 +223,17 @@ class AddressImporter:
 
         # Calculate a lookup table for the normals to avoid computing
         # them multiple times for the same geometry.
-        normals = self._compute_normals(feature.geom.geos.simplify())
+        normals = _compute_normals(feature.geom.geos.simplify())
 
         # Construct addresses for each side of the street. They have to be done
         # separately since each side may have a different number of addresses.
-        addresses = self._build_addresses_on_side(
+        addresses = _build_addresses_on_side(
             street, municipality, feature, normals, right_side=True
         )
-        addresses += self._build_addresses_on_side(
+        addresses += _build_addresses_on_side(
             street, municipality, feature, normals, right_side=False
         )
         return addresses
-
-    def _build_addresses_on_side(
-        self,
-        street: Street,
-        municipality: Municipality,
-        feature: Feature,
-        normals: dict[float, tuple[float, float]],
-        right_side: bool,
-    ) -> list[Address]:
-        """Constructs addresses for one side (right or left) of a street."""
-        numbers = self._find_numbers(feature, right_side)
-        if not numbers:
-            return []  # No buildings on this side of the street
-
-        # The street numbers are spread evenly to the length of the street link. This
-        # means that if there is only one number, the address location will be in the
-        # middle (normalized distance 0.5) of the line segment. If there are two
-        # numbers, they will be at distance 0.25 and 0.75, and so on.
-        interval = 1.0 / len(numbers)
-        start_distance = interval / 2
-
-        line_string = feature.geom.geos
-        addresses = []
-        for i, number in enumerate(numbers):
-            # Distance between 0 and 1 on the line string where the address should
-            # be placed
-            distance = start_distance + i * interval
-
-            # To be able to translate the location towards the side of the street,
-            # we need to find the normal of the street at the given distance.
-            normal_x, normal_y = self._find_normal(distance, normals, right_side)
-
-            # Now we can find the exact point on the line string at the given distance,
-            # and translate it along the normal.
-            street_location = line_string.interpolate_normalized(distance)
-            location = Point(
-                x=street_location.x + normal_x * ADDRESS_LOCATION_OFFSET_METERS,
-                y=street_location.y + normal_y * ADDRESS_LOCATION_OFFSET_METERS,
-                srid=street_location.srid,
-            )
-            addresses.append(
-                Address(
-                    street=street,
-                    municipality=municipality,
-                    number=number,
-                    location=location,
-                )
-            )
-
-        return addresses
-
-    def _find_numbers(self, feature: Feature, right_side: bool = False) -> range:
-        """Find the numbers on the given side of the street from the feature."""
-        # Get first and last building numbers on this side of the street from the
-        # feature
-        if right_side:
-            first_number = feature["ENS_TALO_O"].value
-            last_number = feature["VIIM_TAL_O"].value
-        else:
-            first_number = feature["ENS_TALO_V"].value
-            last_number = feature["VIIM_TAL_V"].value
-
-        if first_number is None or last_number is None:
-            return range(0)  # This side of the street has no buildings
-
-        # Depending on the digitizing direction, for some street links
-        # the last and first number might be in the opposite order.
-        if last_number < first_number:
-            number_increment = -2
-            last_number_offset = -1
-        else:
-            number_increment = 2
-            last_number_offset = 1
-
-        return range(first_number, last_number + last_number_offset, number_increment)
-
-    def _compute_normals(
-        self, line_string: LineString
-    ) -> dict[float, tuple[float, float]]:
-        """
-        Compute a lookup table for the normals for each line segment in the line string.
-        This is done so that given an interpolated distance (between 0 and 1) on the
-        line string, we can quickly find the normal at that distance.
-        """
-        normals = {}
-        start_x, start_y = line_string[0][:2]
-        for end_x, end_y, *_ in line_string[1:]:
-            if (end_x, end_y) == line_string[-1][:2]:
-                distance = 1  # Make sure distance 1 ends at the last point
-            else:
-                distance = line_string.project_normalized(Point(end_x, end_y))
-            # Calculate the normal
-            dx = end_x - start_x
-            dy = end_y - start_y
-            length = sqrt(dx**2 + dy**2)
-            normal = -dy / length, dx / length
-            # Associate with the distance for fast lookup of the
-            # normal between the current start point and end point.
-            normals[distance] = normal
-            start_x, start_y = end_x, end_y
-        return normals
-
-    def _find_normal(
-        self, distance: float, normals: dict, opposite: bool = False
-    ) -> tuple[float, float]:
-        """
-        Given an distance between 0 and 1 on the line string, find the normal
-        (or its opposite) from the provided dictionary.
-        """
-        distances = list(normals.keys())
-        distance_index = bisect_left(distances, distance)
-        normal_index = distances[distance_index]
-        x, y = normals[normal_index]
-        # If we are creating addresses for the right side of the street,
-        # we need the normal pointing in the opposite direction.
-        if opposite:
-            return -x, -y
-        return x, y
 
     @lru_cache(maxsize=None)  # noqa: B019
     def _create_street(
@@ -254,15 +269,3 @@ class AddressImporter:
         return create_municipality(
             municipality_code, municipality_fi, municipality_sv, municipality_fi
         )
-
-    def _has_required_fields(self, feature: Feature) -> bool:
-        """Check whether the feature contains street name, first/last numbers
-        and municipality code.
-        """
-        street_keys = ["TIENIMI_SU", "TIENIMI_RU"]
-        number_keys = ["ENS_TALO_O", "ENS_TALO_V", "VIIM_TAL_O", "VIIM_TAL_V"]
-        municipality_key = "KUNTAKOODI"
-        has_street = any(feature[key].value for key in street_keys)
-        has_number = any(feature[key].value for key in number_keys)
-        has_municipality = feature[municipality_key].value
-        return has_street and has_number and has_municipality
