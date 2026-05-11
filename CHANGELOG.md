@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.3](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.2...geo-search-v2.1.3) (2026-05-11)
+
+
+### Bug Fixes
+
+* Add logging statement for total municipalities updated ([a54be3f](https://github.com/City-of-Helsinki/geo-search/commit/a54be3fb28fc754634a90a7f059b330638150b6f))
+* **docker-entrypoint:** Use '[[' instead of '[' for conditional tests ([632fc25](https://github.com/City-of-Helsinki/geo-search/commit/632fc25a845efa94025e14cb354e248b415c748c))
+* **settings:** Update DATABASE_URL and remove SECRET_KEY manual setup ([b5bf03d](https://github.com/City-of-Helsinki/geo-search/commit/b5bf03d8958f88254f676e1805475ead34f78e53))
+
+
+### Dependencies
+
+* Bump django from 6.0.4 to 6.0.5 ([60839f9](https://github.com/City-of-Helsinki/geo-search/commit/60839f9e1334618277e02bbe77a84f759310a963))
+* Bump pip from 26.0 to 26.1 ([437ab82](https://github.com/City-of-Helsinki/geo-search/commit/437ab82e3a9c2496f206f90608230c1aee6bba01))
+
 ## [2.1.2](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.1...geo-search-v2.1.2) (2026-04-14)
 
 
