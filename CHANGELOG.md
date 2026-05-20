@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.5](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.4...geo-search-v2.1.5) (2026-05-20)
+
+
+### Dependencies
+
+* Bump idna from 3.11 to 3.15 ([e35ce53](https://github.com/City-of-Helsinki/geo-search/commit/e35ce53ea8a2253e49bf6aff2b14884055398cf3))
+
 ## [2.1.4](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.3...geo-search-v2.1.4) (2026-05-19)
 
 
