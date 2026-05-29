@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from pytest import mark
 from rest_framework.test import APIClient
@@ -325,3 +327,66 @@ def test_filter_municipalities_by_municipality_code(api_client: APIClient):
         "previous": None,
         "results": [serializer.to_representation(match)],
     }
+
+
+@mark.django_db
+def test_address_list_select_related_and_prefetch_prevents_n_plus_one_queries(
+    api_client: APIClient,
+):
+    url = reverse("address:address-list")
+
+    AddressFactory()
+    with CaptureQueriesContext(connection) as ctx_one:
+        response = api_client.get(url)
+    assert response.status_code == 200
+    assert response.data["count"] == 1
+
+    AddressFactory.create_batch(4)
+    with CaptureQueriesContext(connection) as ctx_many:
+        response = api_client.get(url)
+    assert response.status_code == 200
+    assert response.data["count"] == 5
+
+    assert len(ctx_one) == len(ctx_many)
+
+
+@mark.django_db
+def test_postal_code_area_list_prefetch_prevents_n_plus_one_queries(
+    api_client: APIClient,
+):
+    url = reverse("address:postalcodearea-list")
+
+    PostalCodeAreaFactory()
+    with CaptureQueriesContext(connection) as ctx_one:
+        response = api_client.get(url)
+    assert response.status_code == 200
+    assert response.data["count"] == 1
+
+    PostalCodeAreaFactory.create_batch(4)
+    with CaptureQueriesContext(connection) as ctx_many:
+        response = api_client.get(url)
+    assert response.status_code == 200
+    assert response.data["count"] == 5
+
+    assert len(ctx_one) == len(ctx_many)
+
+
+@mark.django_db
+def test_municipality_list_prefetch_prevents_n_plus_one_queries(
+    api_client: APIClient,
+):
+    url = reverse("address:municipality-list")
+
+    MunicipalityFactory()
+    with CaptureQueriesContext(connection) as ctx_one:
+        response = api_client.get(url)
+    assert response.status_code == 200
+    assert response.data["count"] == 1
+
+    MunicipalityFactory.create_batch(4)
+    with CaptureQueriesContext(connection) as ctx_many:
+        response = api_client.get(url)
+    assert response.status_code == 200
+    assert response.data["count"] == 5
+
+    assert len(ctx_one) == len(ctx_many)
