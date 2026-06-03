@@ -12,17 +12,19 @@ ENV TZ="Europe/Helsinki"
 # Default for URL prefix, handled by uwsgi, ignored by devserver
 # Works like this: "/example" -> http://hostname.domain.name/example
 ENV DJANGO_URL_PREFIX=/
+ENV UV_NO_CACHE=1
 
 WORKDIR /app
 USER root
 
-COPY requirements.txt .
+COPY pyproject.toml uv.lock ./
 
 RUN dnf update -y && dnf install -y \
     nmap-ncat \
     postgresql \
-    && pip install -U pip setuptools wheel \
-    && pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir "uv==0.11.6" \
+    && uv export --frozen --no-dev -o /tmp/requirements.txt \
+    && pip install --no-cache-dir -r /tmp/requirements.txt \
     && uwsgi --build-plugin https://github.com/City-of-Helsinki/uwsgi-sentry \
     && mkdir -p /srv/app/static \
     && dnf clean all
@@ -36,8 +38,8 @@ FROM appbase AS development
 
 ENV DEV_SERVER=1
 
-COPY requirements-dev.txt .
-RUN pip install --no-cache-dir -r requirements-dev.txt
+RUN uv export --frozen --group dev -o /tmp/requirements-dev.txt \
+    && pip install --no-cache-dir -r /tmp/requirements-dev.txt
 
 COPY . .
 

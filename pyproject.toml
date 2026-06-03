@@ -2,6 +2,38 @@
 name = "geo-search"
 requires-python = ">=3.12, <3.13"
 version = "2.1.6"
+dependencies = [
+    "django",
+    "django-cors-headers",
+    "django-gisserver",
+    "django-environ",
+    "django-helsinki-health-endpoints",
+    "django-parler",
+    "django-parler-rest",
+    "djangorestframework",
+    "djangorestframework-api-key",
+    "djangorestframework-xml",
+    "drf-spectacular",
+    "psycopg[c]",
+    "requests",
+    "sentry-sdk[django]",
+    "whitenoise",
+    "uwsgi",
+    "uwsgitop",
+]
+
+[dependency-groups]
+dev = [
+    "ipython",
+    "pytest",
+    "pytest-cov",
+    "pytest-django",
+    "factory-boy",
+]
+
+[tool.uv]
+package = false
+exclude-newer = "1 week"
 
 [tool.ruff]
 target-version = "py312"
@@ -34,8 +66,3 @@ filterwarnings = [
     # Ignore cache key warnings during testing
     "ignore:Cache key contains characters that will cause errors if used with memcached:RuntimeWarning:django",
 ]
-
-[tool.pip-tools.compile]
-generate-hashes = true
-strip-extras = true
-allow-unsafe = true
