@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.6](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.5...geo-search-v2.1.6) (2026-06-03)
+
+
+### Bug Fixes
+
+* **address-api:** Reduce consecutive DB queries in /v1/address/ ([f6a515d](https://github.com/City-of-Helsinki/geo-search/commit/f6a515da9682b7dc49e9ac767bc6d64588630a04))
+
 ## [2.1.5](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.4...geo-search-v2.1.5) (2026-05-20)
 
 
