@@ -1,0 +1,32 @@
+# Virtual environment — must be built from scratch inside the image
+.venv
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# uv cache
+.uv/
+
+# Test / coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Docs
+docs/
+
+# Local env files
+.env
+.env.*
