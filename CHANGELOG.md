@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.6...geo-search-v2.2.0) (2026-06-05)
+
+
+### Features
+
+* Use uv sync with virtualenv ([e42e888](https://github.com/City-of-Helsinki/geo-search/commit/e42e888c1f52b82e31cf0cd48835869942391b33))
+
+
+### Bug Fixes
+
+* **migrations:** Add unique together and constraint migrations ([4933faf](https://github.com/City-of-Helsinki/geo-search/commit/4933fafeeec02a6e523791a6daf3927666a17153))
+
 ## [2.1.6](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.5...geo-search-v2.1.6) (2026-06-03)
 
 
