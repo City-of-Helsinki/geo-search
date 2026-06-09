@@ -21,8 +21,19 @@ Prerequisites:
 
 ### Installing Python requirements
 
-* Run `pip install -r requirements.txt`
-* Run `pip install -r requirements-dev.txt` (development requirements)
+First, make sure `uv` is installed. See the [official installer](https://docs.astral.sh/uv/getting-started/installation/) or run:
+
+    pip install uv
+
+Verify with `uv --version`.
+
+* Run `uv sync --group dev`
+
+This creates a virtual environment at `.venv/` and installs all production and development dependencies exactly as pinned in `uv.lock`.
+
+To activate the virtual environment:
+
+    source .venv/bin/activate
 
 ### Database
 
@@ -122,15 +133,26 @@ You can also use the Django management commands directly:
 
 ## Keeping Python requirements up to date
 
-1. Add new packages to `requirements.in` or `requirements-dev.in`
-2. Update `.txt` file for the changed requirements file:
-    * `pip-compile requirements.in`
-    * `pip-compile requirements-dev.in`
-3. If you want to update dependencies to their newest versions, run:
-    * `pip-compile -U requirements.in`
-    * `pip-compile -U requirements-dev.in`
-4. To install Python requirements run:
-    * `pip-sync requirements.txt requirements-dev.txt`
+### Adding and removing dependencies
+
+The following commands automatically update both `pyproject.toml` and `uv.lock` — no need to run `uv lock` separately afterwards:
+
+* Add a production dependency: `uv add <package>`
+* Add a development dependency: `uv add --group dev <package>`
+* Remove a dependency: `uv remove <package>`
+
+### Upgrading packages
+
+To upgrade to the newest versions allowed by `exclude-newer` and version constraints:
+
+* Upgrade a single package: `uv lock --upgrade-package <package>`
+* Upgrade all packages: `uv lock --upgrade`
+
+Then apply the updated lock file locally:
+
+    uv sync --group dev
+
+The `uv.lock` file must always be committed to version control — it is the source of truth for reproducible builds.
 
 ## Code format
 
