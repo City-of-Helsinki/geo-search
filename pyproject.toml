@@ -18,11 +18,13 @@ dependencies = [
     "requests",
     "sentry-sdk[django]",
     "whitenoise",
-    "uwsgi",
-    "uwsgitop",
 ]
 
 [dependency-groups]
+prod = [
+    "uwsgi",
+    "uwsgitop",
+]
 dev = [
     "ipython",
     "pytest",
