@@ -35,6 +35,11 @@ To activate the virtual environment:
 
     source .venv/bin/activate
 
+The `.venv/` environment is only for local development without Docker. The
+container image uses `UV_PROJECT_ENVIRONMENT=/opt/app-root` and adds
+`/opt/app-root/bin` to `PATH` in the Dockerfile; it does not use `VIRTUAL_ENV` or
+`/opt/venv`.
+
 ### Database
 
 To setup a database compatible with default database settings:
