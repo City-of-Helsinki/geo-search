@@ -313,8 +313,6 @@ dependencies = [
     { name = "psycopg", extra = ["c"] },
     { name = "requests" },
     { name = "sentry-sdk", extra = ["django"] },
-    { name = "uwsgi" },
-    { name = "uwsgitop" },
     { name = "whitenoise" },
 ]
 
@@ -325,6 +323,10 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-django" },
+]
+prod = [
+    { name = "uwsgi" },
+    { name = "uwsgitop" },
 ]
 
 [package.metadata]
@@ -343,8 +345,6 @@ requires-dist = [
     { name = "psycopg", extras = ["c"] },
     { name = "requests" },
     { name = "sentry-sdk", extras = ["django"] },
-    { name = "uwsgi" },
-    { name = "uwsgitop" },
     { name = "whitenoise" },
 ]
 
@@ -355,6 +355,10 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-django" },
+]
+prod = [
+    { name = "uwsgi" },
+    { name = "uwsgitop" },
 ]
 
 [[package]]
