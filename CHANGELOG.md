@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.2.0...geo-search-v2.2.1) (2026-08-13)
+
+
+### Bug Fixes
+
+* **release-please:** Update uv.lock TOML JSONPath ([2308edc](https://github.com/City-of-Helsinki/geo-search/commit/2308edc68883053d6a1e10d7fefe1746ba6664ac))
+
+
+### Dependencies
+
+* Bump django from 6.0.5 to 6.0.6 ([5aba58d](https://github.com/City-of-Helsinki/geo-search/commit/5aba58d2799194eddbcda24553f9d1623836a2a8))
+* Bump django from 6.0.6 to 6.0.7 ([162f298](https://github.com/City-of-Helsinki/geo-search/commit/162f298584cda788e0bbd8b418a6f61f84760d65))
+* Move uwsgi and uwsgitop to prod-dependencies ([d706cd4](https://github.com/City-of-Helsinki/geo-search/commit/d706cd4a4eb57b32aee4a2b12d03b0038f09524b))
+* Update uv and packages ([00158d8](https://github.com/City-of-Helsinki/geo-search/commit/00158d8fa6c28e47bd9772f362c3b501b553d212))
+
+
+### Documentation
+
+* Use uv-instructions ([b463126](https://github.com/City-of-Helsinki/geo-search/commit/b4631269cbe6709e166af01c11fcf276a838476b))
+
 ## [2.2.0](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.1.6...geo-search-v2.2.0) (2026-06-05)
 
 
