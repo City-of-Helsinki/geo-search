@@ -5,7 +5,7 @@ FROM helsinki.azurecr.io/ubi9/python-312-gdal AS appbase
 # Commit used to pull python-uwsgi-common.
 ARG UWSGI_COMMON_REF=1a9d30d172c2c1ca00d5025a4464e98e00565c44
 
-COPY --from=ghcr.io/astral-sh/uv:0.12.5@sha256:e85be844203885286c60ffad8a858d48afb6c5a5c237ca0e67f12e74b8f174b1 /uv /uvx /usr/local/bin/
+COPY --from=ghcr.io/astral-sh/uv:0.12.18@sha256:3adc3706091ce7c2fe595e669628caedd6d951551b92b258b7e7dbe06d9440bc /uv /uvx /usr/local/bin/
 
 # Fixes git vulnerability issue in openshift
 COPY .gitconfig .
