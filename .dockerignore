@@ -1,6 +1,9 @@
 # Virtual environment — must be built from scratch inside the image
 .venv
 
+# Local datasets are mounted at runtime
+.devdata/
+
 # Python cache
 __pycache__/
 *.py[cod]

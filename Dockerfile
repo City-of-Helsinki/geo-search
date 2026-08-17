@@ -5,7 +5,7 @@ FROM helsinki.azurecr.io/ubi9/python-312-gdal AS appbase
 # Commit used to pull python-uwsgi-common.
 ARG UWSGI_COMMON_REF=1a9d30d172c2c1ca00d5025a4464e98e00565c44
 
-COPY --from=ghcr.io/astral-sh/uv:0.12.5@sha256:e85be844203885286c60ffad8a858d48afb6c5a5c237ca0e67f12e74b8f174b1 /uv /uvx /usr/local/bin/
+COPY --from=ghcr.io/astral-sh/uv:0.12.19@sha256:04d046b13e60d6bcec73cbc5e1cad25d680dea90c8573340950a0ac2d1aef424 /uv /uvx /usr/local/bin/
 
 # Fixes git vulnerability issue in openshift
 COPY .gitconfig .
@@ -14,8 +14,6 @@ COPY .gitconfig /etc/gitconfig
 
 ENV STATIC_ROOT=/srv/app/static
 ENV TZ="Europe/Helsinki"
-# Default for URL prefix, handled by uwsgi, ignored by devserver
-# Works like this: "/example" -> http://hostname.domain.name/example
 ENV DJANGO_URL_PREFIX=/
 ENV UV_PROJECT_ENVIRONMENT=/opt/app-root \
     UV_COMPILE_BYTECODE=1 \
@@ -53,9 +51,16 @@ EXPOSE 8080/tcp
 FROM appbase AS development
 # ==============================
 
-ENV DEV_SERVER=1
+ENV DEV_SERVER=1 \
+    HOME=/opt/app-root
 
-RUN uv sync --frozen --group dev --group prod
+RUN dnf install -y git unzip findutils \
+    && dnf clean all \
+    && uv sync --frozen --group dev --group prod \
+    && usermod --home /opt/app-root default \
+    && chown -R default:root /opt/app-root \
+    && command -v curl \
+    && command -v ogr2ogr
 
 COPY . .
 
