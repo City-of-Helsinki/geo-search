@@ -135,6 +135,13 @@ After municipalities are imported, import other data:
     # Import addresses (required, specify province)
     docker compose --profile populate run --rm populate digiroad uusimaa
 
+The Digiroad download endpoint establishes a session during its redirect
+chain. The import script keeps a temporary curl cookie jar for that single
+download, passing it on each redirect so the request can reach the ZIP archive
+instead of looping until curl's redirect limit. The jar is created under the
+system temporary directory and removed on completion, interruption, or error;
+it does not contain project credentials and is not persisted in the repository.
+
     # Import postal code areas (optional, specify province)
     docker compose --profile populate run --rm populate paavo uusimaa
 
