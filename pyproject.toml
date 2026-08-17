@@ -26,6 +26,8 @@ prod = [
     "uwsgitop",
 ]
 dev = [
+    "pre-commit>=4.3.0,<5",
+    "ruff==0.14.0",
     "ipython",
     "pytest",
     "pytest-cov",
