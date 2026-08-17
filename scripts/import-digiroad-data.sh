@@ -40,7 +40,15 @@ CONVERTED_DIR=$DATA_DIR/converted
 
 # Download the source data
 mkdir -p $DATA_DIR
-curl --proto "=https" --tlsv1.2 -sSf -L -o $DATA_DIR/data.zip $DATA_URL
+COOKIE_JAR=$(mktemp "${TMPDIR:-/tmp}/digiroad-cookies.XXXXXX")
+trap 'rm -f "$COOKIE_JAR"' 0
+trap 'exit 1' HUP INT TERM
+curl --proto "=https" --tlsv1.2 -sSf -L \
+  --connect-timeout 30 --speed-limit 1024 --speed-time 60 \
+  --cookie "$COOKIE_JAR" \
+  --cookie-jar "$COOKIE_JAR" \
+  -o "$DATA_DIR/data.zip" \
+  "$DATA_URL"
 
 # Extract the shapefiles from the archive
 rm -rf $EXTRACTED_DIR

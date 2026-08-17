@@ -92,6 +92,10 @@ After municipalities are imported, import other data:
     # Import addresses (required, specify province)
     ./scripts/import-digiroad-data.sh uusimaa
 
+The Digiroad download sets a session cookie during redirects. The script
+uses a temporary cookie jar so curl can follow them to the ZIP file. The
+jar holds no credentials and is deleted when the script exits.
+
     # Import postal code areas (optional, specify province)
     ./scripts/import-paavo-data.sh uusimaa
 
