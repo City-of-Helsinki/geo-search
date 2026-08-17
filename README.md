@@ -5,12 +5,113 @@
 
 Service for searching geospatial information
 
-## Development with Docker
+## Development with Dev Containers
 
-1. Copy the contents of `.env.example` to `.env` and modify it if needed
-2. Run `docker compose up`
+Prerequisites:
 
-The project is now running at [localhost:8080](http://localhost:8080)
+* Docker with Compose support
+* Visual Studio Code with the Dev Containers extension
+
+The Dev Container reuses the root Dockerfile's `development` target and
+`compose.yaml`. The `overrideCommand` setting in `devcontainer.json` keeps
+the Django container running while you start the server and run commands
+from the editor terminal.
+
+Open the repository in Visual Studio Code and run **Dev Containers: Reopen in
+Container**. After setup finishes, open new terminal and run in the container terminal:
+
+    uv run manage.py migrate
+    uv run manage.py runserver 0.0.0.0:8080
+
+The API is available at [localhost:8080/v1](http://localhost:8080/v1). The port is
+bound to `127.0.0.1` only. PostgreSQL is not published to the host.
+
+The repository is mounted at `/app`, including any local `.env` file, which
+Django reads. The setup permits the editor's normal Git credential integration.
+
+### Rebuilding an existing Dev Container
+
+After changing branches or updating the container configuration, use
+**Dev Containers: Rebuild Container** in VS Code. Reopening an existing
+container can reuse its previous image, mounts, and startup command.
+
+If startup still fails with an old configuration, close the remote window
+and run `docker compose down` from the repository root on the host, then
+reopen the repository in a Dev Container. This removes the old containers
+but preserves the database volume. Do not add `--volumes` when keeping data.
+
+### Dev Containers CLI
+
+The same environment can be started without Visual Studio Code by using the
+[Dev Containers CLI](https://github.com/devcontainers/cli). Install the CLI
+(e.g. `npm install --global @devcontainers/cli`, then run this command from
+the repository root:
+
+    devcontainer up
+
+This uses the same `.devcontainer/devcontainer.json` as VS Code. Start the
+application with:
+
+    devcontainer exec uv run manage.py migrate
+    devcontainer exec uv run manage.py runserver 0.0.0.0:8080
+
+Run other commands in another host terminal with `devcontainer exec`:
+
+    devcontainer exec uv run manage.py check
+    devcontainer exec uv run pytest
+    devcontainer exec uv run ruff check
+
+Stop the environment from the repository root with:
+
+    docker compose down
+
+This stops the containers and preserves the database volume.
+
+To intentionally remove the database and initialize a new empty one,
+use command:
+
+    docker compose down --volumes
+
+Python dependencies are installed in the image. Dev Container setup installs
+the pre-commit hooks and their environments. In a container terminal, run:
+
+    ruff check
+    ruff format --check
+    pre-commit run --all-files
+    pytest
+
+### GitHub Copilot CLI
+
+Copilot CLI is optional. Its Dev Container Feature requires Debian/Ubuntu,
+so the shared UBI image uses GitHub's [standalone installer](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli)
+instead. Run in a container terminal to install the pinned version:
+
+    curl -fsSL https://gh.io/copilot-install -o /tmp/copilot-install.sh
+    VERSION=1.0.80 PREFIX=/opt/app-root bash /tmp/copilot-install.sh
+
+The Dev Container has normal outbound network access. Authenticate inside it
+with the OAuth device flow and start Copilot:
+
+    copilot login
+    copilot
+
+The installation and login are stored in the container and are removed when
+it is rebuilt.
+
+## Development with Docker Compose
+
+To start Django automatically without an editor or the Dev Containers CLI:
+
+    docker compose up --build
+
+This starts PostGIS, applies migrations, and runs Django at
+[localhost:8080](http://localhost:8080). Run development commands with
+`docker compose exec django`, for example:
+
+    docker compose exec django pytest
+
+Use `docker compose down` to stop the environment and preserve its database.
+Close and stop an existing Dev Container before switching to this workflow.
 
 ## Development without Docker
 
@@ -59,8 +160,11 @@ Create the PostGIS extension if needed
 
 ## Import or re-import data
 
-The project includes convenient shell scripts for importing geospatial
-data from various sources.
+The project includes shell scripts for importing geospatial data from various
+sources. Run the commands below from a Dev Container terminal after applying
+migrations. For plain Docker Compose, prefix each command with
+`docker compose exec django`. They also work in an activated local Python
+environment with the required system tools installed.
 
 ### Available import scripts
 
@@ -81,9 +185,10 @@ Municipality data must be manually downloaded from NLS:
 1. Visit [NLS Administrative Areas](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/datasets-and-interfaces/product-descriptions/division-administrative-areas-vector)
 2. Download the dataset following NLS's download process
 3. Extract the ZIP file to a directory (e.g., `/tmp/nls/`)
-4. Run the import script:
+4. Put the extracted files under the gitignored `.devdata/` directory and run
+   from the container terminal:
 
-        ./scripts/import-municipalities-data.sh /tmp/nls/SuomenKuntajako_2026_10k.shp
+        ./scripts/import-municipalities-data.sh .devdata/nls/SuomenKuntajako_2026_10k.shp
 
 #### 2. Import addresses and other data
 
@@ -106,13 +211,13 @@ Available provinces: `uusimaa` and `varsinais-suomi`
 
 ### Re-importing data
 
-To re-import data (e.g., after updates):
+To re-import data (e.g., after updates), run from the container terminal:
 
-    # Delete existing address data (prompts for confirmation)
+    # Delete existing address data inside the Dev Container (prompts for confirmation)
     ./scripts/delete-address-data.sh
 
     # Re-import municipalities if needed
-    ./scripts/import-municipalities-data.sh /path/to/SuomenKuntajako_2026_10k.shp
+    ./scripts/import-municipalities-data.sh .devdata/nls/SuomenKuntajako_2026_10k.shp
 
     # Re-import other data
     ./scripts/import-digiroad-data.sh uusimaa
@@ -145,6 +250,8 @@ You can also use the Django management commands directly:
 ### Adding and removing dependencies
 
 The following commands automatically update both `pyproject.toml` and `uv.lock` — no need to run `uv lock` separately afterwards:
+
+Outside or inside the Dev Container:
 
 * Add a production dependency: `uv add <package>`
 * Add a development dependency: `uv add --group dev <package>`
