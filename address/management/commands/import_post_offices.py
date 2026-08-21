@@ -201,5 +201,5 @@ class Command(BaseCommand):
             return num_updated
 
         except Exception as e:
-            logger.error(f"Error updating postal code {postal_code}: {e}")
+            logger.exception(f"Error updating postal code {postal_code}: {e}")
             return 0
