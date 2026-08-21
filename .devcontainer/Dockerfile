@@ -1,5 +1,8 @@
 FROM python:3.12.13-bookworm
 
+# JetBrains' Docker upload preserves the macOS file owner's numeric UID.
+ARG DEV_UID=501
+
 COPY --from=ghcr.io/astral-sh/uv:0.12.5@sha256:e85be844203885286c60ffad8a858d48afb6c5a5c237ca0e67f12e74b8f174b1 \
     /uv /uvx /usr/local/bin/
 
@@ -32,7 +35,9 @@ RUN apt-get update \
         unzip \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd --gid 1000 dev \
-    && useradd --uid 1000 --gid dev --create-home --shell /bin/bash dev \
+    && useradd --uid "$DEV_UID" --gid dev --create-home --shell /bin/bash dev \
+    && install -d --owner dev --group dev --mode 0755 \
+        /.jbdevcontainer/JetBrains/RemoteDev/remote-dev-worker \
     && printf '[credential]\n\thelper =\n' > /home/dev/.gitconfig-safe \
     && chown dev:dev /home/dev/.gitconfig-safe
 

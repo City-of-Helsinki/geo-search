@@ -29,6 +29,9 @@ services:
   django:
     <<: [*dev-image, *dev-security]
     init: true
+    # JetBrains adjusts files copied from the host and its shared backend volume.
+    cap_add:
+      - FOWNER
     environment:
       ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0
       APPLY_MIGRATIONS: "1"
