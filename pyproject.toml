@@ -8,6 +8,7 @@ dependencies = [
     "django-gisserver",
     "django-environ",
     "django-helsinki-health-endpoints",
+    "django-logger-extra",
     "django-parler",
     "django-parler-rest",
     "djangorestframework",

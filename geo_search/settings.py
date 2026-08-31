@@ -3,7 +3,6 @@ from pathlib import Path
 
 import sentry_sdk
 from corsheaders.defaults import default_headers
-from django.utils.log import DEFAULT_LOGGING
 from django.utils.translation import gettext_lazy as _
 from environ import Env
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -11,13 +10,6 @@ from sentry_sdk.types import SamplingContext
 
 GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
 GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
-
-# Enable logging to console from our modules by configuring the root logger
-DEFAULT_LOGGING["loggers"][""] = {
-    "handlers": ["console"],
-    "level": "INFO",
-    "propagate": True,
-}
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,6 +38,45 @@ env = Env(
 env_path = BASE_DIR / ".env"
 if env_path.exists():
     Env.read_env(env_path)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "context": {
+            "()": "logger_extra.filter.LoggerContextFilter",
+        },
+    },
+    "formatters": {
+        "json": {
+            "()": "logger_extra.formatter.JSONFormatter",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "json",
+            "filters": ["context"],
+        },
+    },
+    "loggers": {
+        "": {
+            "handlers": ["console"],
+            "level": env.str("DJANGO_LOG_LEVEL"),
+            "propagate": True,
+        },
+        "django": {
+            "handlers": ["console"],
+            "level": env.str("DJANGO_LOG_LEVEL"),
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["console"],
+            "level": env.str("DJANGO_LOG_LEVEL"),
+            "propagate": False,
+        },
+    },
+}
 
 DEBUG = env.bool("DEBUG")
 DEBUG_TOOLBAR = env.bool("DEBUG_TOOLBAR")
@@ -103,11 +134,13 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "gisserver",
     "helsinki_health_endpoints",
+    "logger_extra",
     # Local apps
     "address",
 ]
 
 MIDDLEWARE = [
+    "logger_extra.middleware.XRequestIdMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
