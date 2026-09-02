@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.2](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.2.1...geo-search-v2.2.2) (2026-09-02)
+
+
+### Bug Fixes
+
+* Preserve traceback when updating postal codes ([f428822](https://github.com/City-of-Helsinki/geo-search/commit/f428822de085fe4c6355670cf022f1177e636c19))
+
+
+### Dependencies
+
+* Bump sqlparse from 0.5.5 to 0.6.0 ([d80410f](https://github.com/City-of-Helsinki/geo-search/commit/d80410feb0d8c618195c73b2efbb44ee8c1e9fee))
+* Update uv and packages ([e01e049](https://github.com/City-of-Helsinki/geo-search/commit/e01e0492e6c757a4e8cdc1038a09087a69c6b23f))
+
 ## [2.2.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.2.0...geo-search-v2.2.1) (2026-08-13)
 
 
