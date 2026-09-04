@@ -1,0 +1,61 @@
+{
+  "name": "Geo Search",
+  "dockerComposeFile": "../compose.yaml",
+  "service": "django",
+  "runServices": ["postgis", "django"],
+  "workspaceFolder": "/workspace",
+  "remoteUser": "dev",
+  "updateRemoteUserUID": true,
+  "overrideCommand": false,
+  "shutdownAction": "stopCompose",
+  "initializeCommand": ["/bin/sh", ".devcontainer/check-no-credentials.sh"],
+  "postCreateCommand": "pre-commit install --install-hooks",
+  "features": {
+    "ghcr.io/devcontainers/features/copilot-cli:1": {
+      "version": "1.0.80"
+    }
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Geo Search API",
+      "onAutoForward": "notify"
+    }
+  },
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "",
+    "GIT_ASKPASS": "/bin/false",
+    "GIT_TERMINAL_PROMPT": "0",
+    "GIT_CONFIG_GLOBAL": "/home/dev/.gitconfig-safe",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "credential.helper",
+    "GIT_CONFIG_VALUE_0": "",
+    "GIT_SSH_COMMAND": "/bin/false",
+    "VSCODE_GIT_ASKPASS_NODE": "",
+    "VSCODE_GIT_ASKPASS_MAIN": "",
+    "VSCODE_GIT_IPC_HANDLE": "",
+    "AWS_ACCESS_KEY_ID": "",
+    "AWS_SECRET_ACCESS_KEY": "",
+    "AWS_SESSION_TOKEN": "",
+    "AZURE_CLIENT_SECRET": "",
+    "GOOGLE_APPLICATION_CREDENTIALS": "",
+    "COPILOT_GITHUB_TOKEN": "",
+    "GH_TOKEN": "",
+    "GITHUB_TOKEN": "",
+    "DOCKER_HOST": ""
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/venv/bin/python",
+        "python.terminal.activateEnvironment": false,
+        "ruff.nativeServer": "on"
+      }
+    }
+  }
+}

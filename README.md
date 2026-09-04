@@ -5,12 +5,53 @@
 
 Service for searching geospatial information
 
-## Development with Docker
+## Development with Dev Containers
 
-1. Copy the contents of `.env.example` to `.env` and modify it if needed
-2. Run `docker compose up`
+Prerequisites:
 
-The project is now running at [localhost:8080](http://localhost:8080)
+* Docker with Compose support
+* Visual Studio Code with the Dev Containers extension
+
+The development environment intentionally does not mount the Docker socket,
+host home directory, SSH agent, cloud configuration, or credential files. All
+host bind sources stay inside the project root. A project-owned empty file is
+mounted over `/workspace/.env`, so an existing host `.env` remains untouched
+but is not visible inside the containers. Other `.env.*` credential files and
+recognized credential directories still make startup fail closed.
+
+Open the repository in Visual Studio Code and run **Dev Containers: Reopen in
+Container**. Compose starts Django and PostGIS, applies migrations, and VS Code
+forwards the API at [localhost:8080](http://localhost:8080). PostgreSQL is not
+published to the host.
+
+Dependencies and pre-commit hook environments are installed in the image, so
+the standard development commands are immediately available:
+
+    ruff check
+    ruff format --check
+    pre-commit run --all-files
+    pytest
+
+The database uses a persistent named volume and starts without application
+data. To remove the database and initialize a new empty one, close the Dev
+Container and run from a host terminal:
+
+    docker compose down --volumes
+
+### GitHub Copilot CLI
+
+The Dev Container installs GitHub Copilot CLI with the official Dev Container
+Feature. Its version is pinned, and no GitHub token or host credential store is
+passed into the container.
+
+The Dev Container has normal outbound network access. Authenticate inside it
+with the OAuth device flow and start Copilot:
+
+    copilot login
+    copilot
+
+The login is stored only in the container and is removed when the container is
+rebuilt.
 
 ## Development without Docker
 
@@ -81,22 +122,31 @@ Municipality data must be manually downloaded from NLS:
 1. Visit [NLS Administrative Areas](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/datasets-and-interfaces/product-descriptions/division-administrative-areas-vector)
 2. Download the dataset following NLS's download process
 3. Extract the ZIP file to a directory (e.g., `/tmp/nls/`)
-4. Run the import script:
+4. Put the extracted files under the gitignored `.devdata/` directory and run
+   the sandboxed population service from a host terminal:
 
-        ./scripts/import-municipalities-data.sh /tmp/nls/SuomenKuntajako_2026_10k.shp
+        docker compose --profile populate run --rm populate \
+            municipalities .devdata/nls/SuomenKuntajako_2026_10k.shp
 
 #### 2. Import addresses and other data
 
 After municipalities are imported, import other data:
 
     # Import addresses (required, specify province)
-    ./scripts/import-digiroad-data.sh uusimaa
+    docker compose --profile populate run --rm populate digiroad uusimaa
+
+The Digiroad download endpoint establishes a session during its redirect
+chain. The import script keeps a temporary curl cookie jar for that single
+download, passing it on each redirect so the request can reach the ZIP archive
+instead of looping until curl's redirect limit. The jar is created under the
+system temporary directory and removed on completion, interruption, or error;
+it does not contain project credentials and is not persisted in the repository.
 
     # Import postal code areas (optional, specify province)
-    ./scripts/import-paavo-data.sh uusimaa
+    docker compose --profile populate run --rm populate paavo uusimaa
 
     # Import post office names (optional, downloads latest data)
-    ./scripts/import-post-office-data.sh
+    docker compose --profile populate run --rm populate post-office
 
 Available provinces: `uusimaa` and `varsinais-suomi`
 
@@ -104,16 +154,22 @@ Available provinces: `uusimaa` and `varsinais-suomi`
 
 To re-import data (e.g., after updates):
 
-    # Delete existing address data (prompts for confirmation)
+    # Delete existing address data inside the Dev Container (prompts for confirmation)
     ./scripts/delete-address-data.sh
 
     # Re-import municipalities if needed
-    ./scripts/import-municipalities-data.sh /path/to/SuomenKuntajako_2026_10k.shp
+    docker compose --profile populate run --rm populate \
+        municipalities .devdata/nls/SuomenKuntajako_2026_10k.shp
 
     # Re-import other data
-    ./scripts/import-digiroad-data.sh uusimaa
-    ./scripts/import-paavo-data.sh uusimaa
-    ./scripts/import-post-office-data.sh
+    docker compose --profile populate run --rm populate digiroad uusimaa
+    docker compose --profile populate run --rm populate paavo uusimaa
+    docker compose --profile populate run --rm populate post-office
+
+The dedicated population service runs as a non-root user with a read-only
+project filesystem, a cleared environment, dropped capabilities,
+`no-new-privileges`, and no Docker socket. Only the database URL is passed to
+the import script.
 
 ### Manual import using Django commands
 
@@ -141,6 +197,8 @@ You can also use the Django management commands directly:
 ### Adding and removing dependencies
 
 The following commands automatically update both `pyproject.toml` and `uv.lock` — no need to run `uv lock` separately afterwards:
+
+Outside or inside the Dev Container:
 
 * Add a production dependency: `uv add <package>`
 * Add a development dependency: `uv add --group dev <package>`

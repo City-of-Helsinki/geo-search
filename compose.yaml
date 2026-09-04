@@ -1,39 +1,78 @@
-services:
+x-dev-image: &dev-image
+  image: geo-search-dev:local
+  build:
+    context: .
+    dockerfile: ./.devcontainer/Dockerfile
 
+x-dev-security: &dev-security
+  user: dev
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+
+services:
   postgis:
     image: postgis/postgis:17-3.5
     platform: linux/amd64
-    restart: on-failure
     environment:
-      POSTGRES_USER: geo-search
-      POSTGRES_PASSWORD: geo-search
       POSTGRES_DB: geo-search
-    ports:
-      - "5434:5432"
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: geo-search
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    container_name: geo-search-db
-
+      - dev-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username geo-search --dbname geo-search"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
   django:
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      target: development
-    env_file:
-      - .env
+    <<: [*dev-image, *dev-security]
+    init: true
+    # JetBrains adjusts files copied from the host and its shared backend volume.
+    cap_add:
+      - FOWNER
+    environment:
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0
+      APPLY_MIGRATIONS: "1"
+      DATABASE_HOST: postgis
+      DATABASE_URL: postgis://geo-search@postgis/geo-search
+      DEBUG: "1"
+      REQUIRE_AUTHORIZATION: "0"
     volumes:
-      - .:/app
-    ports:
-      - "8080:8080"
+      - type: bind
+        source: .
+        target: /workspace
+      - type: bind
+        source: ./.devcontainer/masked.env
+        target: /workspace/.env
+        read_only: true
     depends_on:
-      - postgis
-    container_name: geo-search-django
+      postgis:
+        condition: service_healthy
+  populate:
+    <<: [*dev-image, *dev-security]
+    profiles:
+      - populate
+    entrypoint:
+      - /usr/local/bin/run-populate
+    command:
+      - --help
+    environment:
+      DATABASE_URL: postgis://geo-search@postgis/geo-search
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+        read_only: true
+      - type: bind
+        source: ./.devcontainer/masked.env
+        target: /workspace/.env
+        read_only: true
+    depends_on:
+      postgis:
+        condition: service_healthy
 
 volumes:
-  pgdata:
+  dev-pgdata:
     driver: local
-
-networks:
-  default:
-    name: helsinki
