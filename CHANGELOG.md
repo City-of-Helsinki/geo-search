@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.2.2...geo-search-v2.3.0) (2026-09-04)
+
+
+### Features
+
+* Add structured JSON application logging ([4a7c4b8](https://github.com/City-of-Helsinki/geo-search/commit/4a7c4b8575045e6fe104d897d0a2a3b072b7c918))
+
 ## [2.2.2](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.2.1...geo-search-v2.2.2) (2026-09-02)
 
 
