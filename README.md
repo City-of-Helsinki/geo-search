@@ -20,9 +20,34 @@ but is not visible inside the containers. Other `.env.*` credential files and
 recognized credential directories still make startup fail closed.
 
 Open the repository in Visual Studio Code and run **Dev Containers: Reopen in
-Container**. Compose starts Django and PostGIS, applies migrations, and VS Code
-forwards the API at [localhost:8080](http://localhost:8080). PostgreSQL is not
+Container**. Compose starts Django and PostGIS, applies migrations, and
+publishes the API at [localhost:8080](http://localhost:8080). The port is bound
+to `127.0.0.1` only, so it is not exposed to the network. PostgreSQL is not
 published to the host.
+
+### Dev Containers CLI
+
+The same environment can be started without Visual Studio Code by using the
+[Dev Containers CLI](https://github.com/devcontainers/cli). Install the CLI
+with npm, then run these commands from the repository root:
+
+    npm install --global @devcontainers/cli
+    devcontainer up --workspace-folder .
+
+This uses the same `.devcontainer/devcontainer.json` as VS Code: it builds the
+development image, starts Django and PostGIS, applies migrations, and publishes
+the API at [localhost:8080](http://localhost:8080). Run commands in the Django
+container with `devcontainer exec`:
+
+    devcontainer exec --workspace-folder . python manage.py check
+    devcontainer exec --workspace-folder . pytest
+    devcontainer exec --workspace-folder . ruff check
+
+Stop the environment from the repository root with:
+
+    docker compose down
+
+This stops the containers and preserves the database volume.
 
 Dependencies and pre-commit hook environments are installed in the image, so
 the standard development commands are immediately available:
@@ -164,7 +189,7 @@ it is invoked through `devcontainer exec` (alternatively, run
 `./scripts/delete-address-data.sh` from a Dev Container terminal):
 
     # Delete existing address data inside the Dev Container (prompts for confirmation)
-    ./scripts/delete-address-data.sh
+    devcontainer exec --workspace-folder . ./scripts/delete-address-data.sh
 
     # Re-import municipalities if needed
     docker compose --profile populate run --rm populate \
