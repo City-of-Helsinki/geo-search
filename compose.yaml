@@ -1,39 +1,76 @@
-services:
+x-dev-image: &dev-image
+  image: geo-search-dev:local
+  build:
+    context: .
+    dockerfile: ./.devcontainer/Dockerfile
 
+x-dev-security: &dev-security
+  user: dev
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+
+services:
   postgis:
     image: postgis/postgis:17-3.5
     platform: linux/amd64
-    restart: on-failure
     environment:
-      POSTGRES_USER: geo-search
-      POSTGRES_PASSWORD: geo-search
       POSTGRES_DB: geo-search
-    ports:
-      - "5434:5432"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-geo-search}
+      POSTGRES_USER: geo-search
     volumes:
       - pgdata:/var/lib/postgresql/data
-    container_name: geo-search-db
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 --username geo-search --dbname geo-search"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
   django:
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      target: development
-    env_file:
-      - .env
-    volumes:
-      - .:/app
+    <<: [*dev-image, *dev-security]
+    init: true
+    environment:
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0
+      APPLY_MIGRATIONS: "1"
+      DATABASE_URL: postgis://geo-search:${DATABASE_URL_PASSWORD:-${POSTGRES_PASSWORD:-geo-search}}@postgis/geo-search
+      DEBUG: "1"
+      REQUIRE_AUTHORIZATION: "0"
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+      - type: bind
+        source: ./.devcontainer/masked.env
+        target: /workspace/.env
+        read_only: true
     depends_on:
-      - postgis
-    container_name: geo-search-django
+      postgis:
+        condition: service_healthy
+  populate:
+    <<: [*dev-image, *dev-security]
+    profiles:
+      - populate
+    entrypoint:
+      - /usr/local/bin/run-populate
+    command:
+      - --help
+    environment:
+      DATABASE_URL: postgis://geo-search:${DATABASE_URL_PASSWORD:-${POSTGRES_PASSWORD:-geo-search}}@postgis/geo-search
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+        read_only: true
+      - type: bind
+        source: ./.devcontainer/masked.env
+        target: /workspace/.env
+        read_only: true
+    depends_on:
+      postgis:
+        condition: service_healthy
 
 volumes:
   pgdata:
     driver: local
-
-networks:
-  default:
-    name: helsinki
