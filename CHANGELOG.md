@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.2](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.3.1...geo-search-v2.3.2) (2026-10-07)
+
+
+### Dependencies
+
+* Bump django from 6.1 to 6.1.1 ([14add60](https://github.com/City-of-Helsinki/geo-search/commit/14add603a81898494b71a9de0133f350ff02e11e))
+* Bump urllib3 from 2.7.0 to 2.8.0 ([bfbf1a1](https://github.com/City-of-Helsinki/geo-search/commit/bfbf1a146eaefbe9738c476a56cdf9f52aa16c1b))
+* Bump virtualenv from 21.7.4 to 21.7.13 ([ba36d00](https://github.com/City-of-Helsinki/geo-search/commit/ba36d00c95f28dec5e6ea7d168e9f870c8da1c6c))
+
 ## [2.3.1](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.3.0...geo-search-v2.3.1) (2026-10-02)
 
 
