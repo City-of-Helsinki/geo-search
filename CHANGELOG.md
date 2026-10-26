@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.3](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.3.2...geo-search-v2.3.3) (2026-10-26)
+
+
+### Dependencies
+
+* Bump certifi from 2026.7.22 to 2026.10.19 ([843a0f9](https://github.com/City-of-Helsinki/geo-search/commit/843a0f92fcded94c16ef6587ac92a5d7e1644e82))
+* Bump djangorestframework from 3.18.0 to 3.18.2 ([b92c280](https://github.com/City-of-Helsinki/geo-search/commit/b92c280ab763faa74d89aba87501eb1239c00306))
+* Bump filelock from 3.32.2 to 4.2.1 ([a182ec0](https://github.com/City-of-Helsinki/geo-search/commit/a182ec02dd77775cec41a518f90771d273864470))
+
 ## [2.3.2](https://github.com/City-of-Helsinki/geo-search/compare/geo-search-v2.3.1...geo-search-v2.3.2) (2026-10-07)
 
 
